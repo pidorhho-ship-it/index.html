@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Playerok - Сделки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Playerok - Безопасные сделки</title>
     <style>
         * {
             margin: 0;
@@ -12,163 +12,346 @@
         }
 
         body {
-            background: #0a0a0a;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: white;
-            padding-bottom: 70px;
+            background: #0b0d11;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #eef2ff;
+            padding-bottom: 80px;
         }
 
-        /* Header */
+        /* Header - как в Плеерке */
         .header {
-            background: #0f0f0f;
-            padding: 15px 20px;
+            background: rgba(11, 13, 17, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 14px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 1px solid #1f1f1f;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 100;
         }
 
         .logo-icon {
-            font-size: 32px;
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ff6b35, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
         }
 
         .logo-text {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(135deg, #ff6b35, #ffa500);
+            background: linear-gradient(135deg, #ff7b2c, #ff4d1e);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            letter-spacing: -0.3px;
         }
 
-        /* Контент */
+        .balance-badge {
+            margin-left: auto;
+            background: rgba(255, 123, 44, 0.12);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ff9b4a;
+            border: 1px solid rgba(255, 123, 44, 0.2);
+        }
+
+        /* Экранчики */
         .screen {
-            padding: 20px;
             display: none;
-            animation: fadeIn 0.3s ease;
+            padding: 16px;
+            animation: fadeInUp 0.3s ease;
         }
 
         .screen.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Карточки */
+        /* Карточки - стиль Плеерка */
         .card {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #2a2a2a;
+            background: #13161f;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 123, 44, 0.2);
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #ffa500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #f0f3ff;
         }
 
         .card-text {
             font-size: 14px;
-            color: #aaa;
+            color: #8a8f9e;
+            line-height: 1.45;
         }
 
-        /* Таббар снизу */
+        /* Таббар снизу - как в Плеерке */
         .tabbar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: #0f0f0f;
+            background: rgba(15, 17, 23, 0.96);
+            backdrop-filter: blur(20px);
             display: flex;
             justify-content: space-around;
-            padding: 10px 20px 20px;
-            border-top: 1px solid #1f1f1f;
-            backdrop-filter: blur(10px);
+            padding: 8px 16px 22px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             background: none;
             border: none;
-            color: #777;
-            font-size: 12px;
+            color: #6c717f;
+            font-size: 11px;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
-            padding: 5px 10px;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.2s;
         }
 
-        .tab-item .emoji {
-            font-size: 24px;
+        .tab-item .icon {
+            font-size: 22px;
         }
 
         .tab-item.active {
-            color: #ffa500;
+            color: #ff7b2c;
+            background: rgba(255, 123, 44, 0.1);
         }
 
-        /* Список сделок */
-        .deal-item {
-            background: #1a1a1a;
+        /* Кнопки */
+        .btn {
+            border: none;
+            padding: 14px 20px;
             border-radius: 14px;
-            padding: 15px;
+            font-size: 15px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff7b2c, #ff4d1e);
+            box-shadow: 0 4px 14px rgba(255, 77, 30, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #eef2ff;
+        }
+
+        .btn-secondary {
+            background: #1e2432;
+            color: #eef2ff;
+        }
+
+        /* Инпуты */
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: block;
+            color: #8a8f9e;
+            font-weight: 500;
+        }
+
+        .input-field, .input-select {
+            width: 100%;
+            padding: 14px;
+            background: #0f121a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus, .input-select:focus {
+            outline: none;
+            border-color: #ff7b2c;
+        }
+
+        /* Сделка в списке */
+        .deal-card {
+            background: #13161f;
+            border-radius: 16px;
+            padding: 14px;
             margin-bottom: 12px;
-            border-left: 4px solid #ffa500;
+            border-left: 3px solid #ff7b2c;
+            transition: all 0.2s;
+        }
+
+        .deal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .deal-id {
+            font-size: 11px;
+            color: #6c717f;
+            font-family: monospace;
+            background: rgba(108, 113, 127, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .deal-status {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 30px;
+            background: rgba(255, 123, 44, 0.15);
+            color: #ff9b4a;
+            font-weight: 500;
+        }
+
+        .deal-status.completed {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+        }
+
+        .deal-status.pending {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
         }
 
         .deal-title {
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 15px;
         }
 
-        .deal-status {
-            font-size: 12px;
-            color: #ffa500;
+        .deal-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff9b4a;
         }
 
-        /* Кнопка поддержки */
-        .support-btn {
-            background: linear-gradient(135deg, #ff6b35, #ffa500);
-            border: none;
-            color: white;
-            padding: 15px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
+        .deal-date {
+            font-size: 11px;
+            color: #6c717f;
+            margin-top: 6px;
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: #6c717f;
+        }
+
+        /* Модалка */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #13161f;
+            border-radius: 28px;
+            padding: 24px;
             width: 100%;
-            cursor: pointer;
+            max-width: 340px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
             margin-top: 20px;
         }
 
-        /* Инпут */
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            border-radius: 12px;
-            color: white;
-            margin-bottom: 15px;
+        .hidden {
+            display: none;
         }
 
-        .create-btn {
-            background: #ffa500;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            width: 100%;
+        /* Кнопка скопировать */
+        .copy-btn {
+            background: rgba(255, 123, 44, 0.1);
+            border: 1px solid rgba(255, 123, 44, 0.2);
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #ff9b4a;
+            cursor: pointer;
+        }
+
+        /* Строка баланса в профиле */
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        hr {
+            border-color: rgba(255, 255, 255, 0.05);
+            margin: 12px 0;
         }
     </style>
 </head>
@@ -178,87 +361,376 @@
     <div class="header">
         <div class="logo-icon">🎮</div>
         <div class="logo-text">Playerok</div>
+        <div class="balance-badge" id="balanceBadge">$0</div>
     </div>
 
-    <!-- Экран ГЛАВНАЯ -->
+    <!-- Главная -->
     <div id="homeScreen" class="screen active">
         <div class="card">
             <div class="card-title">🔥 Добро пожаловать!</div>
-            <div class="card-text">Площадка для безопасных сделок между игроками.</div>
+            <div class="card-text">Безопасные сделки между игроками. Комиссия 5%.</div>
         </div>
         <div class="card">
-            <div class="card-title">📈 Статистика</div>
-            <div class="card-text">✅ Завершено сделок: 0<br>💰 В обороте: 0₽</div>
+            <div class="card-title">📈 Моя статистика</div>
+            <div class="card-text" id="statsText">✅ Завершено: 0<br>💰 В обороте: $0</div>
         </div>
         <div class="card">
-            <div class="card-title">🎁 Как это работает</div>
-            <div class="card-text">1. Создай сделку<br>2. Дождись подтверждения<br>3. Получи товар/деньги</div>
+            <div class="card-title">🎯 Как это работает</div>
+            <div class="card-text">1️⃣ Создай сделку<br>2️⃣ Отправь ссылку покупателю<br>3️⃣ После оплаты средства заморожены<br>4️⃣ Подтверди получение → деньги у тебя</div>
         </div>
+        <button class="btn btn-primary" onclick="switchScreen('deals')">➕ Создать сделку</button>
     </div>
 
-    <!-- Экран СДЕЛКИ -->
+    <!-- Сделки -->
     <div id="dealsScreen" class="screen">
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="dealTitle" class="input-field" placeholder="Что продаёшь?">
-            <input type="text" id="dealPrice" class="input-field" placeholder="Цена">
-            <button class="create-btn" onclick="createDeal()">➕ Создать сделку</button>
-        </div>
-        <div id="dealsList">
-            <div class="card" style="text-align:center; color:#666;">
-                Пока нет сделок. Создай первую!
+        <div class="card">
+            <div class="card-title">➕ Новая сделка</div>
+            <div class="input-group">
+                <label class="input-label">Что продаёшь?</label>
+                <input type="text" id="dealTitle" class="input-field" placeholder="Аккаунт CS2, валюта, скин...">
             </div>
+            <div class="input-group">
+                <label class="input-label">Сумма</label>
+                <input type="number" id="dealAmount" class="input-field" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Валюта</label>
+                <select id="dealCurrency" class="input-select">
+                    <option value="USD">🇺🇸 USD</option>
+                    <option value="RUB">🇷🇺 RUB</option>
+                    <option value="USDT">💎 USDT</option>
+                    <option value="TON">💎 TON</option>
+                    <option value="EUR">🇪🇺 EUR</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="createDeal()">🚀 Создать сделку</button>
         </div>
+        <div id="myDealsList"></div>
     </div>
 
-    <!-- Экран ПРОФИЛЬ -->
+    <!-- Профиль -->
     <div id="profileScreen" class="screen">
         <div class="card">
             <div class="card-title">👤 Мой профиль</div>
-            <div class="card-text">Telegram ID: загружается...<br>Сделок: 0<br>Рейтинг: ★★★★★</div>
+            <div class="card-text" id="profileInfo">Загрузка...</div>
         </div>
         <div class="card">
-            <div class="card-title">⚙️ Настройки</div>
-            <div class="card-text">Уведомления: Вкл<br>Язык: Русский</div>
+            <div class="card-title">💰 Баланс</div>
+            <div class="balance-row">
+                <span>Доступно:</span>
+                <span id="availableBalance">$0</span>
+            </div>
+            <div class="balance-row">
+                <span>Заморожено:</span>
+                <span id="frozenBalance">$0</span>
+            </div>
+            <hr>
+            <div class="balance-row">
+                <span><strong>Итого:</strong></span>
+                <span><strong id="totalBalance">$0</strong></span>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 16px;">
+                <button class="btn btn-outline" style="flex:1" onclick="showDeposit()">📥 Пополнить</button>
+                <button class="btn btn-outline" style="flex:1" onclick="showWithdraw()">📤 Вывести</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">💳 Реквизиты</div>
+            <div class="card-text" id="requisitesInfo">Не указаны</div>
+            <button class="btn btn-outline" style="margin-top: 12px;" onclick="showRequisitesModal()">✏️ Редактировать</button>
         </div>
     </div>
 
-    <!-- Экран ПОДДЕРЖКА -->
+    <!-- Поддержка -->
     <div id="supportScreen" class="screen">
         <div class="card">
-            <div class="card-title">📞 Связь с поддержкой</div>
-            <div class="card-text">Напиши нам, ответим в течение часа.</div>
-            <button class="support-btn" onclick="openSupport()">💬 Написать в поддержку</button>
+            <div class="card-title">📞 Служба поддержки</div>
+            <div class="card-text">Операторы онлайн 24/7. Среднее время ответа — 2 минуты.</div>
+            <button class="btn btn-primary" style="margin-top: 12px;" onclick="openSupport()">💬 Написать в поддержку</button>
         </div>
         <div class="card">
             <div class="card-title">❓ Частые вопросы</div>
-            <div class="card-text">• Как создать сделку?<br>• Как подтвердить оплату?<br>• Безопасно ли это?</div>
+            <div class="card-text">
+                <b>• Как безопасно продать?</b><br>
+                Создайте сделку, отправьте ссылку покупателю. Средства заморозятся до подтверждения.<br><br>
+                <b>• Сколько комиссия?</b><br>
+                Всего 5% от суммы сделки.<br><br>
+                <b>• Что делать при споре?</b><br>
+                Напишите в поддержку — разберём ситуацию.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">📢 Канал с отзывами</div>
+            <div class="card-text">@marketrade_reviews</div>
+            <button class="btn btn-outline" style="margin-top: 10px;" onclick="copyChannel()">📋 Скопировать ссылку</button>
         </div>
     </div>
 
-    <!-- Нижнее меню -->
+    <!-- Таббар -->
     <div class="tabbar">
         <button class="tab-item active" data-screen="home">
-            <span class="emoji">🏠</span>
+            <span class="icon">🏠</span>
             <span>Главная</span>
         </button>
         <button class="tab-item" data-screen="deals">
-            <span class="emoji">📋</span>
+            <span class="icon">📋</span>
             <span>Сделки</span>
         </button>
         <button class="tab-item" data-screen="profile">
-            <span class="emoji">👤</span>
+            <span class="icon">👤</span>
             <span>Профиль</span>
         </button>
         <button class="tab-item" data-screen="support">
-            <span class="emoji">🛡️</span>
+            <span class="icon">🛡️</span>
             <span>Поддержка</span>
         </button>
     </div>
 
-    <script>
-        // Переключение экранов
-        let currentScreen = 'home';
+    <!-- Модалка реквизитов -->
+    <div id="requisitesModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-title">💳 Мои реквизиты</div>
+            <div class="input-group">
+                <label class="input-label">Крипто кошелёк</label>
+                <input type="text" id="modalCrypto" class="input-field" placeholder="TON/USDT адрес">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Номер карты</label>
+                <input type="text" id="modalCard" class="input-field" placeholder="0000 0000 0000 0000">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Телефон (СБП)</label>
+                <input type="text" id="modalPhone" class="input-field" placeholder="+7 XXX XXX XX XX">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Отмена</button>
+                <button class="btn btn-primary" style="flex:1" onclick="saveRequisites()">Сохранить</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Модалка пополнения -->
+    <div id="depositModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-title">📥 Пополнение</div>
+            <div class="card-text" style="margin-bottom: 16px;">Отправьте TON на адрес:</div>
+            <div class="input-field" style="font-size: 12px; word-break: break-all; margin-bottom: 12px;" id="depositAddress">UQAKuZBMMlkXwy7TCy36twjX8XiegskGb9LMHrGU8vluV7XX</div>
+            <button class="btn btn-outline" onclick="copyDepositAddress()">📋 Скопировать адрес</button>
+            <button class="btn btn-secondary" style="margin-top: 12px;" onclick="closeDepositModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        // === ДАННЫЕ ===
+        let tgUser = null;
+        let balance = { available: 1250.50, frozen: 200.00 };
+        let deals = [];
+        let requisites = { crypto: '', card: '', phone: '' };
+        let dealIdCounter = 100;
+        
+        // Загрузка из localStorage
+        function loadData() {
+            const savedDeals = localStorage.getItem('playerok_deals');
+            if (savedDeals) deals = JSON.parse(savedDeals);
+            
+            const savedBalance = localStorage.getItem('playerok_balance');
+            if (savedBalance) balance = JSON.parse(savedBalance);
+            
+            const savedRequisites = localStorage.getItem('playerok_requisites');
+            if (savedRequisites) requisites = JSON.parse(savedRequisites);
+            
+            if (deals.length === 0) {
+                deals.push({
+                    id: 'PL-100',
+                    title: 'Аккаунт CS2 Prime',
+                    amount: 45,
+                    currency: 'USD',
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    sellerId: 'me'
+                });
+                deals.push({
+                    id: 'PL-099',
+                    title: '1000 золота WoW',
+                    amount: 25,
+                    currency: 'USD',
+                    status: 'completed',
+                    createdAt: new Date(Date.now() - 86400000).toISOString(),
+                    sellerId: 'me'
+                });
+                saveDeals();
+            }
+            updateAllUI();
+        }
+        
+        function saveDeals() {
+            localStorage.setItem('playerok_deals', JSON.stringify(deals));
+        }
+        
+        function saveBalance() {
+            localStorage.setItem('playerok_balance', JSON.stringify(balance));
+        }
+        
+        function saveRequisitesData() {
+            localStorage.setItem('playerok_requisites', JSON.stringify(requisites));
+        }
+        
+        function updateAllUI() {
+            // Шапка
+            document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
+            
+            // Статистика на главной
+            const completed = deals.filter(d => d.status === 'completed').length;
+            const activeTotal = deals.filter(d => d.status === 'active').reduce((sum, d) => sum + d.amount, 0);
+            document.getElementById('statsText').innerHTML = `✅ Завершено сделок: ${completed}<br>💰 В обороте: $${activeTotal.toFixed(2)}`;
+            
+            // Профиль
+            if (tgUser) {
+                document.getElementById('profileInfo').innerHTML = `
+                    🆔 ID: ${tgUser.id}<br>
+                    📝 ${tgUser.first_name || 'Пользователь'} ${tgUser.last_name || ''}<br>
+                    @${tgUser.username || 'no_username'}
+                `;
+            } else {
+                document.getElementById('profileInfo').innerHTML = '🆔 Гость (войди в Telegram)';
+            }
+            
+            document.getElementById('availableBalance').innerHTML = `$${balance.available.toFixed(2)}`;
+            document.getElementById('frozenBalance').innerHTML = `$${balance.frozen.toFixed(2)}`;
+            document.getElementById('totalBalance').innerHTML = `$${(balance.available + balance.frozen).toFixed(2)}`;
+            
+            // Реквизиты
+            let reqText = '';
+            if (requisites.crypto) reqText += `💎 Крипто: ${requisites.crypto.substring(0, 12)}...\n`;
+            if (requisites.card) reqText += `💳 Карта: ****${requisites.card.slice(-4)}\n`;
+            if (requisites.phone) reqText += `📱 Телефон: ${requisites.phone}\n`;
+            if (!reqText) reqText = '❌ Не указаны';
+            document.getElementById('requisitesInfo').innerHTML = reqText.replace(/\n/g, '<br>');
+            
+            // Список сделок
+            renderDealsList();
+        }
+        
+        function renderDealsList() {
+            const container = document.getElementById('myDealsList');
+            const myDeals = deals.filter(d => d.sellerId === 'me');
+            
+            if (myDeals.length === 0) {
+                container.innerHTML = `<div class="empty-state">📭 У вас пока нет сделок<br>Создайте первую!</div>`;
+                return;
+            }
+            
+            let html = '';
+            for (let deal of myDeals) {
+                const statusText = { active: '🟡 Активна', completed: '✅ Завершена', pending: '⏳ Ожидает' }[deal.status] || deal.status;
+                const statusClass = { active: '', completed: 'completed', pending: 'pending' }[deal.status] || '';
+                const date = new Date(deal.createdAt).toLocaleDateString('ru-RU');
+                
+                html += `
+                    <div class="deal-card">
+                        <div class="deal-header">
+                            <span class="deal-id">${deal.id}</span>
+                            <span class="deal-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="deal-title">${deal.title}</div>
+                        <div class="deal-amount">${deal.amount.toFixed(2)} ${deal.currency}</div>
+                        <div class="deal-date">📅 ${date}</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+        
+        function createDeal() {
+            const title = document.getElementById('dealTitle').value;
+            const amount = parseFloat(document.getElementById('dealAmount').value);
+            const currency = document.getElementById('dealCurrency').value;
+            
+            if (!title || title.length < 3) {
+                alert('Введите название сделки (минимум 3 символа)');
+                return;
+            }
+            if (isNaN(amount) || amount <= 0) {
+                alert('Введите корректную сумму');
+                return;
+            }
+            
+            dealIdCounter++;
+            const newDeal = {
+                id: `PL-${dealIdCounter}`,
+                title: title,
+                amount: amount,
+                currency: currency,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                sellerId: 'me'
+            };
+            
+            deals.unshift(newDeal);
+            saveDeals();
+            
+            // Очистка полей
+            document.getElementById('dealTitle').value = '';
+            document.getElementById('dealAmount').value = '';
+            
+            updateAllUI();
+            
+            // Показываем ссылку для покупателя
+            const botUsername = window.Telegram?.WebApp?.initDataUnsafe?.user?.username || 'PlayerokBot';
+            const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
+            
+            alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}\n\nОтправьте её покупателю для оплаты.`);
+        }
+        
+        function showDeposit() {
+            document.getElementById('depositModal').classList.remove('hidden');
+        }
+        
+        function closeDepositModal() {
+            document.getElementById('depositModal').classList.add('hidden');
+        }
+        
+        function copyDepositAddress() {
+            const address = document.getElementById('depositAddress').innerText;
+            navigator.clipboard.writeText(address);
+            alert('✅ Адрес скопирован!');
+        }
+        
+        function showWithdraw() {
+            alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @PlayerokSupport`);
+        }
+        
+        function showRequisitesModal() {
+            document.getElementById('modalCrypto').value = requisites.crypto || '';
+            document.getElementById('modalCard').value = requisites.card || '';
+            document.getElementById('modalPhone').value = requisites.phone || '';
+            document.getElementById('requisitesModal').classList.remove('hidden');
+        }
+        
+        function closeModal() {
+            document.getElementById('requisitesModal').classList.add('hidden');
+        }
+        
+        function saveRequisites() {
+            requisites.crypto = document.getElementById('modalCrypto').value;
+            requisites.card = document.getElementById('modalCard').value;
+            requisites.phone = document.getElementById('modalPhone').value;
+            saveRequisitesData();
+            updateAllUI();
+            closeModal();
+            alert('✅ Реквизиты сохранены!');
+        }
+        
+        function openSupport() {
+            window.open('https://t.me/PlayerokSupport', '_blank');
+        }
+        
+        function copyChannel() {
+            navigator.clipboard.writeText('https://t.me/marketrade_reviews');
+            alert('✅ Ссылка на канал скопирована!');
+        }
+        
+        // Переключение экранов
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
@@ -269,88 +741,28 @@
                 btn.classList.remove('active');
             });
             document.querySelector(`.tab-item[data-screen="${screenId}"]`).classList.add('active');
-            
-            currentScreen = screenId;
         }
-
-        // Обработчики кнопок таббара
+        
+        // Обработчики таббара
         document.querySelectorAll('.tab-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const screen = btn.getAttribute('data-screen');
                 switchScreen(screen);
             });
         });
-
-        // Массив сделок
-        let deals = [];
-
-        function renderDeals() {
-            const container = document.getElementById('dealsList');
-            if (deals.length === 0) {
-                container.innerHTML = `<div class="card" style="text-align:center; color:#666;">📭 Пока нет сделок. Создай первую!</div>`;
-                return;
-            }
-            
-            container.innerHTML = deals.map((deal, index) => `
-                <div class="deal-item">
-                    <div class="deal-title">🎮 ${deal.title}</div>
-                    <div>💰 ${deal.price} ₽</div>
-                    <div class="deal-status">⏳ Статус: ${deal.status}</div>
-                </div>
-            `).join('');
-        }
-
-        function createDeal() {
-            const title = document.getElementById('dealTitle').value;
-            const price = document.getElementById('dealPrice').value;
-            
-            if (!title || !price) {
-                alert('Заполни название и цену!');
-                return;
-            }
-            
-            deals.push({
-                title: title,
-                price: price,
-                status: 'Ожидает подтверждения'
-            });
-            
-            document.getElementById('dealTitle').value = '';
-            document.getElementById('dealPrice').value = '';
-            renderDeals();
-            
-            // Переключаемся на вкладку сделок
-            switchScreen('deals');
-        }
-
-        // Открыть поддержку (отправить сообщение в Telegram)
-        function openSupport() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.sendData('support_request');
-                alert('Скоро с тобой свяжутся!');
-            } else {
-                alert('Поддержка: напиши @PlayerokSupport');
-            }
-        }
-
-        // Telegram WebApp API
+        
+        // Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             const tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
             
-            // Отправляем данные боту, чтобы он понял, что юзер открыл приложение
-            tg.sendData('app_opened');
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                tgUser = tg.initDataUnsafe.user;
+            }
         }
         
-        // Показываем Telegram ID в профиле (если есть)
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-            const user = window.Telegram.WebApp.initDataUnsafe.user;
-            document.querySelector('#profileScreen .card:first-child .card-text').innerHTML = 
-                `Telegram ID: ${user.id}<br>Имя: ${user.first_name}<br>Сделок: 0<br>Рейтинг: ★★★★★`;
-        }
-        
-        renderDeals();
+        loadData();
     </script>
 </body>
 </html>
