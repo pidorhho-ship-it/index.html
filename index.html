@@ -28,7 +28,6 @@
             --text-muted: #8DA9D4;
         }
 
-        /* Header */
         .header {
             background: rgba(10, 12, 20, 0.95);
             backdrop-filter: blur(12px);
@@ -42,7 +41,6 @@
             z-index: 100;
         }
 
-        /* Ровный квадратный логотип */
         .logo-square {
             width: 42px;
             height: 42px;
@@ -52,22 +50,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 49, 83, 0.4);
         }
 
         .logo-text {
             font-size: 18px;
             font-weight: 800;
-            letter-spacing: -0.5px;
         }
 
-        .logo-player {
-            color: white;
-        }
-
-        .logo-ok {
-            color: var(--diamond-blue);
-        }
+        .logo-player { color: white; }
+        .logo-ok { color: var(--diamond-blue); }
 
         .balance-badge {
             margin-left: auto;
@@ -86,9 +77,7 @@
             animation: fadeInUp 0.3s ease;
         }
 
-        .screen.active {
-            display: block;
-        }
+        .screen.active { display: block; }
 
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(12px); }
@@ -145,13 +134,9 @@
             cursor: pointer;
             padding: 8px 16px;
             border-radius: 30px;
-            transition: all 0.2s;
         }
 
-        .tab-item .icon {
-            font-size: 22px;
-        }
-
+        .tab-item .icon { font-size: 22px; }
         .tab-item.active {
             color: var(--diamond-blue);
             background: rgba(62, 95, 138, 0.15);
@@ -165,7 +150,6 @@
             font-weight: 700;
             width: 100%;
             cursor: pointer;
-            transition: all 0.2s;
             color: white;
         }
 
@@ -174,33 +158,20 @@
             box-shadow: 0 6px 20px rgba(0, 49, 83, 0.4);
         }
 
-        .btn-primary:active {
-            transform: scale(0.97);
-        }
-
+        .btn-primary:active { transform: scale(0.97); }
         .btn-outline {
             background: transparent;
             border: 1.5px solid var(--diamond-blue);
             color: var(--diamond-blue);
         }
 
-        .btn-secondary {
-            background: var(--cobalt-blue);
-            color: white;
-        }
-
-        .input-group {
-            margin-bottom: 14px;
-        }
-
+        .input-group { margin-bottom: 14px; }
         .input-label {
             font-size: 13px;
             margin-bottom: 6px;
             display: block;
             color: var(--text-muted);
-            font-weight: 500;
         }
-
         .input-field, .input-select {
             width: 100%;
             padding: 14px;
@@ -210,7 +181,6 @@
             color: white;
             font-size: 15px;
         }
-
         .input-field:focus, .input-select:focus {
             outline: none;
             border-color: var(--diamond-blue);
@@ -235,7 +205,6 @@
         .deal-id {
             font-size: 11px;
             color: var(--text-muted);
-            font-family: monospace;
             background: rgba(62, 95, 138, 0.15);
             padding: 2px 8px;
             border-radius: 20px;
@@ -247,7 +216,6 @@
             border-radius: 30px;
             background: rgba(62, 95, 138, 0.2);
             color: var(--diamond-blue);
-            font-weight: 500;
         }
 
         .deal-status.completed {
@@ -255,17 +223,8 @@
             color: #4ade80;
         }
 
-        .deal-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 15px;
-        }
-
-        .deal-amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--diamond-blue);
-        }
+        .deal-title { font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .deal-amount { font-size: 18px; font-weight: 700; color: var(--diamond-blue); }
 
         /* Профиль */
         .profile-header {
@@ -288,30 +247,18 @@
             color: white;
             border: 2px solid var(--diamond-blue);
             box-shadow: 0 0 0 3px rgba(62, 95, 138, 0.3);
+            overflow: hidden;
         }
         
         .profile-avatar img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
         }
 
-        .profile-info {
-            flex: 1;
-        }
-
-        .profile-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 4px;
-        }
-
-        .profile-username {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px; }
+        .profile-username { font-size: 14px; color: var(--text-muted); }
 
         .balance-row {
             display: flex;
@@ -320,10 +267,7 @@
             padding: 8px 0;
         }
 
-        hr {
-            border-color: rgba(62, 95, 138, 0.2);
-            margin: 12px 0;
-        }
+        hr { border-color: rgba(62, 95, 138, 0.2); margin: 12px 0; }
 
         /* Чат */
         .chat-container {
@@ -371,13 +315,8 @@
             max-width: 85%;
         }
 
-        .message-user {
-            align-self: flex-end;
-        }
-
-        .message-support {
-            align-self: flex-start;
-        }
+        .message-user { align-self: flex-end; }
+        .message-support { align-self: flex-start; }
 
         .message-bubble {
             padding: 10px 14px;
@@ -423,10 +362,7 @@
             font-size: 14px;
         }
 
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--diamond-blue);
-        }
+        .chat-input:focus { outline: none; border-color: var(--diamond-blue); }
 
         .chat-send-btn {
             background: linear-gradient(135deg, var(--diamond-blue), var(--berlin-blue));
@@ -492,9 +428,7 @@
             margin-top: 20px;
         }
 
-        .hidden {
-            display: none;
-        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -609,22 +543,10 @@
     </div>
 
     <div class="tabbar">
-        <button class="tab-item active" data-screen="home">
-            <span class="icon">🏠</span>
-            <span>Главная</span>
-        </button>
-        <button class="tab-item" data-screen="deals">
-            <span class="icon">📋</span>
-            <span>Сделки</span>
-        </button>
-        <button class="tab-item" data-screen="profile">
-            <span class="icon">👤</span>
-            <span>Профиль</span>
-        </button>
-        <button class="tab-item" data-screen="support">
-            <span class="icon">🛡️</span>
-            <span>Поддержка</span>
-        </button>
+        <button class="tab-item active" data-screen="home"><span class="icon">🏠</span><span>Главная</span></button>
+        <button class="tab-item" data-screen="deals"><span class="icon">📋</span><span>Сделки</span></button>
+        <button class="tab-item" data-screen="profile"><span class="icon">👤</span><span>Профиль</span></button>
+        <button class="tab-item" data-screen="support"><span class="icon">🛡️</span><span>Поддержка</span></button>
     </div>
 
     <div id="requisitesModal" class="modal hidden">
@@ -660,6 +582,9 @@
     </div>
 
     <script>
+        // ⚠️ ВСТАВЬ СЮДА ТОКЕН ТВОЕГО БОТА!
+        const BOT_TOKEN = "8141551310:AAH3rDX7gqQL3qB05H2F1cCQ4cxouL1NEDc";
+        
         let tgUser = null;
         let balance = { available: 1250.50, frozen: 200.00 };
         let deals = [];
@@ -707,21 +632,10 @@
             updateAllUI();
         }
         
-        function saveDeals() {
-            localStorage.setItem('playerok_deals', JSON.stringify(deals));
-        }
-        
-        function saveBalance() {
-            localStorage.setItem('playerok_balance', JSON.stringify(balance));
-        }
-        
-        function saveRequisitesData() {
-            localStorage.setItem('playerok_requisites', JSON.stringify(requisites));
-        }
-        
-        function saveChat() {
-            localStorage.setItem('playerok_chat', JSON.stringify(chatMessages));
-        }
+        function saveDeals() { localStorage.setItem('playerok_deals', JSON.stringify(deals)); }
+        function saveBalance() { localStorage.setItem('playerok_balance', JSON.stringify(balance)); }
+        function saveRequisitesData() { localStorage.setItem('playerok_requisites', JSON.stringify(requisites)); }
+        function saveChat() { localStorage.setItem('playerok_chat', JSON.stringify(chatMessages)); }
         
         function updateAllUI() {
             document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
@@ -853,12 +767,7 @@
             const now = new Date();
             const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
             
-            chatMessages.push({
-                sender: 'user',
-                text: text,
-                time: timeStr
-            });
-            
+            chatMessages.push({ sender: 'user', text: text, time: timeStr });
             saveChat();
             renderChat();
             input.value = '';
@@ -876,7 +785,37 @@
             }, 1000);
         }
         
-        function loadTelegramProfile() {
+        // РАБОТАЮЩАЯ ЗАГРУЗКА АВАТАРКИ через Bot API
+        async function fetchUserPhoto(userId) {
+            if (!BOT_TOKEN) {
+                console.warn('Bot token not set');
+                return null;
+            }
+            
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${userId}&limit=1`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.ok && data.result && data.result.photos && data.result.photos.length > 0) {
+                    const fileId = data.result.photos[0][0].file_id;
+                    const fileUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`;
+                    const fileRes = await fetch(fileUrl);
+                    const fileData = await fileRes.json();
+                    
+                    if (fileData.ok && fileData.result.file_path) {
+                        return `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching user photo:', error);
+                return null;
+            }
+        }
+        
+        async function loadTelegramProfile() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.ready();
@@ -887,17 +826,22 @@
                     const firstName = tgUser.first_name || 'Пользователь';
                     const lastName = tgUser.last_name || '';
                     const username = tgUser.username || 'no_username';
+                    const userId = tgUser.id;
                     const fullName = `${firstName} ${lastName}`.trim();
                     
                     document.getElementById('profileName').innerHTML = escapeHtml(fullName);
                     document.getElementById('profileUsername').innerHTML = `@${escapeHtml(username)}`;
                     
-                    // Аватарка из Telegram (если есть фото)
-                    if (tgUser.photo_url) {
-                        document.getElementById('profileAvatar').innerHTML = `<img src="${tgUser.photo_url}" alt="avatar">`;
+                    // Загружаем реальную аватарку через Bot API
+                    const avatarUrl = await fetchUserPhoto(userId);
+                    const avatarContainer = document.getElementById('profileAvatar');
+                    
+                    if (avatarUrl) {
+                        avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
                     } else {
+                        // Если фото нет, показываем инициалы
                         const firstLetter = firstName.charAt(0).toUpperCase();
-                        document.getElementById('profileAvatar').innerHTML = firstLetter;
+                        avatarContainer.innerHTML = firstLetter;
                     }
                 } else {
                     document.getElementById('profileName').innerHTML = 'Гость';
@@ -911,13 +855,8 @@
             }
         }
         
-        function showDeposit() {
-            document.getElementById('depositModal').classList.remove('hidden');
-        }
-        
-        function closeDepositModal() {
-            document.getElementById('depositModal').classList.add('hidden');
-        }
+        function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
+        function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
         
         function copyDepositAddress() {
             const address = document.getElementById('depositAddress').innerText;
@@ -925,9 +864,7 @@
             alert('✅ Адрес скопирован!');
         }
         
-        function showWithdraw() {
-            alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @PlayerokSupport`);
-        }
+        function showWithdraw() { alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @PlayerokSupport`); }
         
         function showRequisitesModal() {
             document.getElementById('modalCrypto').value = requisites.crypto || '';
@@ -936,9 +873,7 @@
             document.getElementById('requisitesModal').classList.remove('hidden');
         }
         
-        function closeModal() {
-            document.getElementById('requisitesModal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('requisitesModal').classList.add('hidden'); }
         
         function saveRequisites() {
             requisites.crypto = document.getElementById('modalCrypto').value;
@@ -951,26 +886,11 @@
         }
         
         function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
             document.getElementById(screenId + 'Screen').classList.add('active');
-            
-            document.querySelectorAll('.tab-item').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-item[data-screen="${screenId}"]`).classList.add('active');
         }
         
         document.querySelectorAll('.tab-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const screen = btn.getAttribute('data-screen');
-                switchScreen(screen);
-            });
-        });
-        
-        loadTelegramProfile();
-        loadData();
-    </script>
-</body>
-</html>
+            btn.addEventListener('click
