@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Соси хуйца!</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            font-size: 24px;
+            padding: 20px 40px;
+            margin: 15px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .btn1 {
+            background: #ff4757;
+            color: white;
+            box-shadow: 0 0 20px rgba(255,71,87,0.5);
+        }
+        .btn2 {
+            background: #1e90ff;
+            color: white;
+        }
+        .message {
+            font-size: 28px;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            min-height: 100px;
+        }
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">🍆🔥</div>
+    <h1>Выбери вариант:</h1>
+    
+    <button class="btn1" onclick="sosat()">СОСНУТЬ ХУЙЦА! 🍆</button>
+    <button class="btn2" onclick="neSosat()">НЕЕЕ САМ СОСИ! 😤</button>
+    
+    <div class="message" id="message">
+        👆 Жми на кнопку
+    </div>
+
+    <script>
+        function sosat() {
+            document.getElementById('message').innerHTML = `
+                🤣🤣🤣<br>
+                <span style="font-size: 40px;">ВЫ ОТСОСАЛИ ХУЙ! 🍆💦</span><br>
+                Поздравляю, ты сделал это! 😂
+            `;
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.sendData("sosal");
+            }
+        }
+        
+        function neSosat() {
+            document.getElementById('message').innerHTML = `
+                😤😤😤<br>
+                <span style="font-size: 35px;">НЕЕЕ САМ СОСИ!</span><br>
+                Я СИДЕЛ В ТЮРЬМЕ, ЕБАЛ ТВОЮ МАМУ! 🚔👮‍♂️<br>
+                Так что иди нахуй отсюда, соси сам! 🔥
+            `;
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.sendData("ne_sosal");
+            }
+        }
+        
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+    </script>
+</body>
+</html>
