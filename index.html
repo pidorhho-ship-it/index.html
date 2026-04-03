@@ -3,96 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Соси хуйца!</title>
+    <title>Playerok - Сделки</title>
     <style>
-        body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 20px;
-            min-height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            background: #0f0f0f;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #1f1f1f;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b35, #ffa500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Контент */
+        .screen {
+            padding: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Карточки */
+        .card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffa500;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        /* Таббар снизу */
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0f0f0f;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px 20px;
+            border-top: 1px solid #1f1f1f;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-item {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-        }
-        button {
-            font-size: 24px;
-            padding: 20px 40px;
-            margin: 15px;
+            gap: 5px;
+            background: none;
             border: none;
-            border-radius: 50px;
+            color: #777;
+            font-size: 12px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+
+        .tab-item .emoji {
+            font-size: 24px;
+        }
+
+        .tab-item.active {
+            color: #ffa500;
+        }
+
+        /* Список сделок */
+        .deal-item {
+            background: #1a1a1a;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #ffa500;
+        }
+
+        .deal-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .deal-status {
+            font-size: 12px;
+            color: #ffa500;
+        }
+
+        /* Кнопка поддержки */
+        .support-btn {
+            background: linear-gradient(135deg, #ff6b35, #ffa500);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Инпут */
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .create-btn {
+            background: #ffa500;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
             font-weight: bold;
-        }
-        button:active {
-            transform: scale(0.95);
-        }
-        .btn1 {
-            background: #ff4757;
-            color: white;
-            box-shadow: 0 0 20px rgba(255,71,87,0.5);
-        }
-        .btn2 {
-            background: #1e90ff;
-            color: white;
-        }
-        .message {
-            font-size: 28px;
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 20px;
-            min-height: 100px;
-        }
-        .logo {
-            font-size: 60px;
-            margin-bottom: 20px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="logo">🍆🔥</div>
-    <h1>Выбери вариант:</h1>
-    
-    <button class="btn1" onclick="sosat()">СОСНУТЬ ХУЙЦА! 🍆</button>
-    <button class="btn2" onclick="neSosat()">НЕЕЕ САМ СОСИ! 😤</button>
-    
-    <div class="message" id="message">
-        👆 Жми на кнопку
+
+    <!-- Шапка -->
+    <div class="header">
+        <div class="logo-icon">🎮</div>
+        <div class="logo-text">Playerok</div>
+    </div>
+
+    <!-- Экран ГЛАВНАЯ -->
+    <div id="homeScreen" class="screen active">
+        <div class="card">
+            <div class="card-title">🔥 Добро пожаловать!</div>
+            <div class="card-text">Площадка для безопасных сделок между игроками.</div>
+        </div>
+        <div class="card">
+            <div class="card-title">📈 Статистика</div>
+            <div class="card-text">✅ Завершено сделок: 0<br>💰 В обороте: 0₽</div>
+        </div>
+        <div class="card">
+            <div class="card-title">🎁 Как это работает</div>
+            <div class="card-text">1. Создай сделку<br>2. Дождись подтверждения<br>3. Получи товар/деньги</div>
+        </div>
+    </div>
+
+    <!-- Экран СДЕЛКИ -->
+    <div id="dealsScreen" class="screen">
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="dealTitle" class="input-field" placeholder="Что продаёшь?">
+            <input type="text" id="dealPrice" class="input-field" placeholder="Цена">
+            <button class="create-btn" onclick="createDeal()">➕ Создать сделку</button>
+        </div>
+        <div id="dealsList">
+            <div class="card" style="text-align:center; color:#666;">
+                Пока нет сделок. Создай первую!
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран ПРОФИЛЬ -->
+    <div id="profileScreen" class="screen">
+        <div class="card">
+            <div class="card-title">👤 Мой профиль</div>
+            <div class="card-text">Telegram ID: загружается...<br>Сделок: 0<br>Рейтинг: ★★★★★</div>
+        </div>
+        <div class="card">
+            <div class="card-title">⚙️ Настройки</div>
+            <div class="card-text">Уведомления: Вкл<br>Язык: Русский</div>
+        </div>
+    </div>
+
+    <!-- Экран ПОДДЕРЖКА -->
+    <div id="supportScreen" class="screen">
+        <div class="card">
+            <div class="card-title">📞 Связь с поддержкой</div>
+            <div class="card-text">Напиши нам, ответим в течение часа.</div>
+            <button class="support-btn" onclick="openSupport()">💬 Написать в поддержку</button>
+        </div>
+        <div class="card">
+            <div class="card-title">❓ Частые вопросы</div>
+            <div class="card-text">• Как создать сделку?<br>• Как подтвердить оплату?<br>• Безопасно ли это?</div>
+        </div>
+    </div>
+
+    <!-- Нижнее меню -->
+    <div class="tabbar">
+        <button class="tab-item active" data-screen="home">
+            <span class="emoji">🏠</span>
+            <span>Главная</span>
+        </button>
+        <button class="tab-item" data-screen="deals">
+            <span class="emoji">📋</span>
+            <span>Сделки</span>
+        </button>
+        <button class="tab-item" data-screen="profile">
+            <span class="emoji">👤</span>
+            <span>Профиль</span>
+        </button>
+        <button class="tab-item" data-screen="support">
+            <span class="emoji">🛡️</span>
+            <span>Поддержка</span>
+        </button>
     </div>
 
     <script>
-        function sosat() {
-            document.getElementById('message').innerHTML = `
-                🤣🤣🤣<br>
-                <span style="font-size: 40px;">ВЫ ОТСОСАЛИ ХУЙ! 🍆💦</span><br>
-                Поздравляю, ты сделал это! 😂
-            `;
+        // Переключение экранов
+        let currentScreen = 'home';
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId + 'Screen').classList.add('active');
+            
+            document.querySelectorAll('.tab-item').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.tab-item[data-screen="${screenId}"]`).classList.add('active');
+            
+            currentScreen = screenId;
+        }
+
+        // Обработчики кнопок таббара
+        document.querySelectorAll('.tab-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const screen = btn.getAttribute('data-screen');
+                switchScreen(screen);
+            });
+        });
+
+        // Массив сделок
+        let deals = [];
+
+        function renderDeals() {
+            const container = document.getElementById('dealsList');
+            if (deals.length === 0) {
+                container.innerHTML = `<div class="card" style="text-align:center; color:#666;">📭 Пока нет сделок. Создай первую!</div>`;
+                return;
+            }
+            
+            container.innerHTML = deals.map((deal, index) => `
+                <div class="deal-item">
+                    <div class="deal-title">🎮 ${deal.title}</div>
+                    <div>💰 ${deal.price} ₽</div>
+                    <div class="deal-status">⏳ Статус: ${deal.status}</div>
+                </div>
+            `).join('');
+        }
+
+        function createDeal() {
+            const title = document.getElementById('dealTitle').value;
+            const price = document.getElementById('dealPrice').value;
+            
+            if (!title || !price) {
+                alert('Заполни название и цену!');
+                return;
+            }
+            
+            deals.push({
+                title: title,
+                price: price,
+                status: 'Ожидает подтверждения'
+            });
+            
+            document.getElementById('dealTitle').value = '';
+            document.getElementById('dealPrice').value = '';
+            renderDeals();
+            
+            // Переключаемся на вкладку сделок
+            switchScreen('deals');
+        }
+
+        // Открыть поддержку (отправить сообщение в Telegram)
+        function openSupport() {
             if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.sendData("sosal");
+                window.Telegram.WebApp.sendData('support_request');
+                alert('Скоро с тобой свяжутся!');
+            } else {
+                alert('Поддержка: напиши @PlayerokSupport');
             }
         }
-        
-        function neSosat() {
-            document.getElementById('message').innerHTML = `
-                😤😤😤<br>
-                <span style="font-size: 35px;">НЕЕЕ САМ СОСИ!</span><br>
-                Я СИДЕЛ В ТЮРЬМЕ, ЕБАЛ ТВОЮ МАМУ! 🚔👮‍♂️<br>
-                Так что иди нахуй отсюда, соси сам! 🔥
-            `;
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.sendData("ne_sosal");
-            }
-        }
-        
+
+        // Telegram WebApp API
         if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            
+            // Отправляем данные боту, чтобы он понял, что юзер открыл приложение
+            tg.sendData('app_opened');
         }
+        
+        // Показываем Telegram ID в профиле (если есть)
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            document.querySelector('#profileScreen .card:first-child .card-text').innerHTML = 
+                `Telegram ID: ${user.id}<br>Имя: ${user.first_name}<br>Сделок: 0<br>Рейтинг: ★★★★★`;
+        }
+        
+        renderDeals();
     </script>
 </body>
 </html>
