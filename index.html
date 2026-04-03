@@ -12,57 +12,76 @@
         }
 
         body {
-            background: #0b0d11;
+            background: #0a0c14;
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #eef2ff;
             padding-bottom: 80px;
         }
 
-        /* Header - как в Плеерке */
+        /* Цветовая схема - marine blue collection */
+        :root {
+            --berlin-blue: #003153;
+            --diamond-blue: #3E5F8A;
+            --gentian-blue: #0E294B;
+            --cobalt-blue: #1E213D;
+            --night-blue: #252850;
+            --sapphire-blue: #1D1E33;
+            --marine-glow: #2A3D66;
+            --text-muted: #8DA9D4;
+        }
+
+        /* Header */
         .header {
-            background: rgba(11, 13, 17, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(10, 12, 20, 0.95);
+            backdrop-filter: blur(12px);
             padding: 14px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(62, 95, 138, 0.2);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .logo-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #ff6b35, #f97316);
-            border-radius: 12px;
+        /* Закругленный квадрат с логотипом */
+        .logo-square {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--diamond-blue), var(--berlin-blue));
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 49, 83, 0.4);
         }
 
         .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ff7b2c, #ff4d1e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-player {
+            color: white;
+        }
+
+        .logo-ok {
+            color: var(--diamond-blue);
+            background: rgba(62, 95, 138, 0.2);
+            border-radius: 8px;
+            padding: 0 2px;
         }
 
         .balance-badge {
             margin-left: auto;
-            background: rgba(255, 123, 44, 0.12);
+            background: var(--sapphire-blue);
             padding: 6px 14px;
             border-radius: 40px;
             font-size: 14px;
             font-weight: 600;
-            color: #ff9b4a;
-            border: 1px solid rgba(255, 123, 44, 0.2);
+            color: var(--diamond-blue);
+            border: 1px solid rgba(62, 95, 138, 0.3);
         }
 
         /* Экранчики */
@@ -87,18 +106,14 @@
             }
         }
 
-        /* Карточки - стиль Плеерка */
+        /* Карточки */
         .card {
-            background: #13161f;
+            background: var(--sapphire-blue);
             border-radius: 20px;
             padding: 18px;
             margin-bottom: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(62, 95, 138, 0.2);
             transition: all 0.2s ease;
-        }
-
-        .card:hover {
-            border-color: rgba(255, 123, 44, 0.2);
         }
 
         .card-title {
@@ -108,27 +123,27 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #f0f3ff;
+            color: white;
         }
 
         .card-text {
             font-size: 14px;
-            color: #8a8f9e;
+            color: var(--text-muted);
             line-height: 1.45;
         }
 
-        /* Таббар снизу - как в Плеерке */
+        /* Таббар */
         .tabbar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(15, 17, 23, 0.96);
+            background: rgba(10, 12, 20, 0.96);
             backdrop-filter: blur(20px);
             display: flex;
             justify-content: space-around;
             padding: 8px 16px 22px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: 1px solid rgba(62, 95, 138, 0.2);
         }
 
         .tab-item {
@@ -138,7 +153,7 @@
             gap: 4px;
             background: none;
             border: none;
-            color: #6c717f;
+            color: var(--text-muted);
             font-size: 11px;
             font-weight: 500;
             cursor: pointer;
@@ -152,17 +167,17 @@
         }
 
         .tab-item.active {
-            color: #ff7b2c;
-            background: rgba(255, 123, 44, 0.1);
+            color: var(--diamond-blue);
+            background: rgba(62, 95, 138, 0.15);
         }
 
-        /* Кнопки */
+        /* Кнопки - жирные, красивые */
         .btn {
             border: none;
-            padding: 14px 20px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 600;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
             width: 100%;
             cursor: pointer;
             transition: all 0.2s;
@@ -170,8 +185,8 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #ff7b2c, #ff4d1e);
-            box-shadow: 0 4px 14px rgba(255, 77, 30, 0.25);
+            background: linear-gradient(135deg, var(--diamond-blue), var(--berlin-blue));
+            box-shadow: 0 6px 20px rgba(0, 49, 83, 0.4);
         }
 
         .btn-primary:active {
@@ -180,13 +195,13 @@
 
         .btn-outline {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #eef2ff;
+            border: 1.5px solid var(--diamond-blue);
+            color: var(--diamond-blue);
         }
 
         .btn-secondary {
-            background: #1e2432;
-            color: #eef2ff;
+            background: var(--cobalt-blue);
+            color: white;
         }
 
         /* Инпуты */
@@ -198,15 +213,15 @@
             font-size: 13px;
             margin-bottom: 6px;
             display: block;
-            color: #8a8f9e;
+            color: var(--text-muted);
             font-weight: 500;
         }
 
         .input-field, .input-select {
             width: 100%;
             padding: 14px;
-            background: #0f121a;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--night-blue);
+            border: 1px solid rgba(62, 95, 138, 0.3);
             border-radius: 14px;
             color: white;
             font-size: 15px;
@@ -215,17 +230,16 @@
 
         .input-field:focus, .input-select:focus {
             outline: none;
-            border-color: #ff7b2c;
+            border-color: var(--diamond-blue);
         }
 
         /* Сделка в списке */
         .deal-card {
-            background: #13161f;
+            background: var(--sapphire-blue);
             border-radius: 16px;
             padding: 14px;
             margin-bottom: 12px;
-            border-left: 3px solid #ff7b2c;
-            transition: all 0.2s;
+            border-left: 3px solid var(--diamond-blue);
         }
 
         .deal-header {
@@ -238,9 +252,9 @@
 
         .deal-id {
             font-size: 11px;
-            color: #6c717f;
+            color: var(--text-muted);
             font-family: monospace;
-            background: rgba(108, 113, 127, 0.15);
+            background: rgba(62, 95, 138, 0.15);
             padding: 2px 8px;
             border-radius: 20px;
         }
@@ -249,19 +263,14 @@
             font-size: 11px;
             padding: 3px 10px;
             border-radius: 30px;
-            background: rgba(255, 123, 44, 0.15);
-            color: #ff9b4a;
+            background: rgba(62, 95, 138, 0.2);
+            color: var(--diamond-blue);
             font-weight: 500;
         }
 
         .deal-status.completed {
-            background: rgba(34, 197, 94, 0.12);
+            background: rgba(62, 95, 138, 0.15);
             color: #4ade80;
-        }
-
-        .deal-status.pending {
-            background: rgba(245, 158, 11, 0.12);
-            color: #fbbf24;
         }
 
         .deal-title {
@@ -273,20 +282,186 @@
         .deal-amount {
             font-size: 18px;
             font-weight: 700;
-            color: #ff9b4a;
+            color: var(--diamond-blue);
         }
 
-        .deal-date {
+        /* ========== ПРОФИЛЬ С АВАТАРКОЙ ========== */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--diamond-blue), var(--berlin-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 2px solid var(--diamond-blue);
+            box-shadow: 0 0 0 3px rgba(62, 95, 138, 0.3);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .profile-username {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        hr {
+            border-color: rgba(62, 95, 138, 0.2);
+            margin: 12px 0;
+        }
+
+        /* ========== ЧАТ ПОДДЕРЖКИ ========== */
+        .chat-container {
+            background: var(--sapphire-blue);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-header {
+            background: var(--cobalt-blue);
+            padding: 16px;
+            border-bottom: 1px solid rgba(62, 95, 138, 0.3);
+        }
+
+        .chat-header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--diamond-blue);
+            letter-spacing: 2px;
+        }
+
+        .chat-header-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 350px;
+            min-height: 350px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+
+        .message-user {
+            align-self: flex-end;
+        }
+
+        .message-support {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+
+        .message-user .message-bubble {
+            background: linear-gradient(135deg, var(--diamond-blue), var(--berlin-blue));
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-support .message-bubble {
+            background: var(--night-blue);
+            color: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            padding: 0 8px;
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            background: var(--cobalt-blue);
+            border-top: 1px solid rgba(62, 95, 138, 0.3);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--night-blue);
+            border: 1px solid rgba(62, 95, 138, 0.3);
+            border-radius: 30px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--diamond-blue);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, var(--diamond-blue), var(--berlin-blue));
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .disclaimer {
             font-size: 11px;
-            color: #6c717f;
-            margin-top: 6px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 12px;
+            background: var(--sapphire-blue);
+            border-radius: 12px;
+            margin-top: 12px;
         }
 
-        /* Пустое состояние */
         .empty-state {
             text-align: center;
             padding: 48px 20px;
-            color: #6c717f;
+            color: var(--text-muted);
         }
 
         /* Модалка */
@@ -306,18 +481,19 @@
         }
 
         .modal-content {
-            background: #13161f;
+            background: var(--sapphire-blue);
             border-radius: 28px;
             padding: 24px;
             width: 100%;
             max-width: 340px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(62, 95, 138, 0.3);
         }
 
         .modal-title {
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 20px;
+            color: white;
         }
 
         .modal-buttons {
@@ -329,38 +505,17 @@
         .hidden {
             display: none;
         }
-
-        /* Кнопка скопировать */
-        .copy-btn {
-            background: rgba(255, 123, 44, 0.1);
-            border: 1px solid rgba(255, 123, 44, 0.2);
-            padding: 8px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-            color: #ff9b4a;
-            cursor: pointer;
-        }
-
-        /* Строка баланса в профиле */
-        .balance-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        hr {
-            border-color: rgba(255, 255, 255, 0.05);
-            margin: 12px 0;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Шапка -->
+    <!-- Header -->
     <div class="header">
-        <div class="logo-icon">🎮</div>
-        <div class="logo-text">Playerok</div>
+        <div class="logo-square">
+            <span class="logo-text">
+                <span class="logo-player">Player</span><span class="logo-ok">ok</span>
+            </span>
+        </div>
         <div class="balance-badge" id="balanceBadge">$0</div>
     </div>
 
@@ -400,7 +555,6 @@
                     <option value="RUB">🇷🇺 RUB</option>
                     <option value="USDT">💎 USDT</option>
                     <option value="TON">💎 TON</option>
-                    <option value="EUR">🇪🇺 EUR</option>
                 </select>
             </div>
             <button class="btn btn-primary" onclick="createDeal()">🚀 Создать сделку</button>
@@ -411,8 +565,13 @@
     <!-- Профиль -->
     <div id="profileScreen" class="screen">
         <div class="card">
-            <div class="card-title">👤 Мой профиль</div>
-            <div class="card-text" id="profileInfo">Загрузка...</div>
+            <div class="profile-header" id="profileHeader">
+                <div class="profile-avatar" id="profileAvatar">👤</div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">Загрузка...</div>
+                    <div class="profile-username" id="profileUsername">@loading</div>
+                </div>
+            </div>
         </div>
         <div class="card">
             <div class="card-title">💰 Баланс</div>
@@ -441,28 +600,26 @@
         </div>
     </div>
 
-    <!-- Поддержка -->
+    <!-- Поддержка с чатом -->
     <div id="supportScreen" class="screen">
-        <div class="card">
-            <div class="card-title">📞 Служба поддержки</div>
-            <div class="card-text">Операторы онлайн 24/7. Среднее время ответа — 2 минуты.</div>
-            <button class="btn btn-primary" style="margin-top: 12px;" onclick="openSupport()">💬 Написать в поддержку</button>
-        </div>
-        <div class="card">
-            <div class="card-title">❓ Частые вопросы</div>
-            <div class="card-text">
-                <b>• Как безопасно продать?</b><br>
-                Создайте сделку, отправьте ссылку покупателю. Средства заморозятся до подтверждения.<br><br>
-                <b>• Сколько комиссия?</b><br>
-                Всего 5% от суммы сделки.<br><br>
-                <b>• Что делать при споре?</b><br>
-                Напишите в поддержку — разберём ситуацию.
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-header-title">П О Д Д Е Р Ж К А</div>
+                <div class="chat-header-sub">Операторы онлайн 24/7</div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message message-support">
+                    <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
+                    <div class="message-meta">Поддержка · только что</div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Сообщение...">
+                <button class="chat-send-btn" onclick="sendMessage()">➤</button>
             </div>
         </div>
-        <div class="card">
-            <div class="card-title">📢 Канал с отзывами</div>
-            <div class="card-text">@marketrade_reviews</div>
-            <button class="btn btn-outline" style="margin-top: 10px;" onclick="copyChannel()">📋 Скопировать ссылку</button>
+        <div class="disclaimer">
+            Кратко опишите суть. Без паролей и карт. Учитывая адекватность общения.
         </div>
     </div>
 
@@ -527,7 +684,8 @@
         let deals = [];
         let requisites = { crypto: '', card: '', phone: '' };
         let dealIdCounter = 100;
-        
+        let chatMessages = [];
+
         // Загрузка из localStorage
         function loadData() {
             const savedDeals = localStorage.getItem('playerok_deals');
@@ -538,6 +696,12 @@
             
             const savedRequisites = localStorage.getItem('playerok_requisites');
             if (savedRequisites) requisites = JSON.parse(savedRequisites);
+            
+            const savedChat = localStorage.getItem('playerok_chat');
+            if (savedChat) {
+                chatMessages = JSON.parse(savedChat);
+                renderChat();
+            }
             
             if (deals.length === 0) {
                 deals.push({
@@ -575,31 +739,21 @@
             localStorage.setItem('playerok_requisites', JSON.stringify(requisites));
         }
         
+        function saveChat() {
+            localStorage.setItem('playerok_chat', JSON.stringify(chatMessages));
+        }
+        
         function updateAllUI() {
-            // Шапка
             document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
             
-            // Статистика на главной
             const completed = deals.filter(d => d.status === 'completed').length;
             const activeTotal = deals.filter(d => d.status === 'active').reduce((sum, d) => sum + d.amount, 0);
             document.getElementById('statsText').innerHTML = `✅ Завершено сделок: ${completed}<br>💰 В обороте: $${activeTotal.toFixed(2)}`;
-            
-            // Профиль
-            if (tgUser) {
-                document.getElementById('profileInfo').innerHTML = `
-                    🆔 ID: ${tgUser.id}<br>
-                    📝 ${tgUser.first_name || 'Пользователь'} ${tgUser.last_name || ''}<br>
-                    @${tgUser.username || 'no_username'}
-                `;
-            } else {
-                document.getElementById('profileInfo').innerHTML = '🆔 Гость (войди в Telegram)';
-            }
             
             document.getElementById('availableBalance').innerHTML = `$${balance.available.toFixed(2)}`;
             document.getElementById('frozenBalance').innerHTML = `$${balance.frozen.toFixed(2)}`;
             document.getElementById('totalBalance').innerHTML = `$${(balance.available + balance.frozen).toFixed(2)}`;
             
-            // Реквизиты
             let reqText = '';
             if (requisites.crypto) reqText += `💎 Крипто: ${requisites.crypto.substring(0, 12)}...\n`;
             if (requisites.card) reqText += `💳 Карта: ****${requisites.card.slice(-4)}\n`;
@@ -607,7 +761,6 @@
             if (!reqText) reqText = '❌ Не указаны';
             document.getElementById('requisitesInfo').innerHTML = reqText.replace(/\n/g, '<br>');
             
-            // Список сделок
             renderDealsList();
         }
         
@@ -634,7 +787,7 @@
                         </div>
                         <div class="deal-title">${deal.title}</div>
                         <div class="deal-amount">${deal.amount.toFixed(2)} ${deal.currency}</div>
-                        <div class="deal-date">📅 ${date}</div>
+                        <div class="card-text" style="font-size: 11px; margin-top: 6px;">📅 ${date}</div>
                     </div>
                 `;
             }
@@ -669,17 +822,96 @@
             deals.unshift(newDeal);
             saveDeals();
             
-            // Очистка полей
             document.getElementById('dealTitle').value = '';
             document.getElementById('dealAmount').value = '';
             
             updateAllUI();
             
-            // Показываем ссылку для покупателя
             const botUsername = window.Telegram?.WebApp?.initDataUnsafe?.user?.username || 'PlayerokBot';
             const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
+            alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}`);
+        }
+        
+        // Чат поддержки
+        function renderChat() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
             
-            alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}\n\nОтправьте её покупателю для оплаты.`);
+            if (chatMessages.length === 0) {
+                container.innerHTML = `<div class="message message-support">
+                    <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
+                    <div class="message-meta">Поддержка · только что</div>
+                </div>`;
+                return;
+            }
+            
+            let html = '';
+            for (let msg of chatMessages) {
+                const isUser = msg.sender === 'user';
+                html += `
+                    <div class="message ${isUser ? 'message-user' : 'message-support'}">
+                        <div class="message-bubble">${msg.text}</div>
+                        <div class="message-meta">${isUser ? 'Вы' : 'Поддержка'} · ${msg.time}</div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            
+            chatMessages.push({
+                sender: 'user',
+                text: text,
+                time: timeStr
+            });
+            
+            saveChat();
+            renderChat();
+            input.value = '';
+            
+            // Имитация ответа поддержки
+            setTimeout(() => {
+                const responseTime = new Date();
+                const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
+                chatMessages.push({
+                    sender: 'support',
+                    text: 'Спасибо за обращение! Мы ответим вам в ближайшее время.',
+                    time: responseTimeStr
+                });
+                saveChat();
+                renderChat();
+            }, 1000);
+        }
+        
+        // Профиль из Telegram
+        function loadTelegramProfile() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    tgUser = tg.initDataUnsafe.user;
+                    const firstName = tgUser.first_name || 'Пользователь';
+                    const lastName = tgUser.last_name || '';
+                    const username = tgUser.username || 'no_username';
+                    const fullName = `${firstName} ${lastName}`.trim();
+                    
+                    document.getElementById('profileName').innerHTML = fullName;
+                    document.getElementById('profileUsername').innerHTML = `@${username}`;
+                    
+                    const avatarText = firstName.charAt(0).toUpperCase();
+                    document.getElementById('profileAvatar').innerHTML = avatarText;
+                }
+            }
         }
         
         function showDeposit() {
@@ -721,16 +953,6 @@
             alert('✅ Реквизиты сохранены!');
         }
         
-        function openSupport() {
-            window.open('https://t.me/PlayerokSupport', '_blank');
-        }
-        
-        function copyChannel() {
-            navigator.clipboard.writeText('https://t.me/marketrade_reviews');
-            alert('✅ Ссылка на канал скопирована!');
-        }
-        
-        // Переключение экранов
         function switchScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
@@ -743,7 +965,6 @@
             document.querySelector(`.tab-item[data-screen="${screenId}"]`).classList.add('active');
         }
         
-        // Обработчики таббара
         document.querySelectorAll('.tab-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const screen = btn.getAttribute('data-screen');
@@ -751,17 +972,7 @@
             });
         });
         
-        // Telegram WebApp
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
-            
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                tgUser = tg.initDataUnsafe.user;
-            }
-        }
-        
+        loadTelegramProfile();
         loadData();
     </script>
 </body>
