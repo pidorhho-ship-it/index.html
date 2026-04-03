@@ -50,15 +50,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 49, 83, 0.4);
         }
 
         .logo-text {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
-        .logo-player { color: white; }
-        .logo-ok { color: var(--diamond-blue); }
+        .logo-player {
+            color: white;
+        }
+
+        .logo-ok {
+            color: var(--diamond-blue);
+        }
 
         .balance-badge {
             margin-left: auto;
@@ -226,7 +233,6 @@
         .deal-title { font-weight: 600; margin-bottom: 8px; font-size: 15px; }
         .deal-amount { font-size: 18px; font-weight: 700; color: var(--diamond-blue); }
 
-        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
@@ -269,7 +275,6 @@
 
         hr { border-color: rgba(62, 95, 138, 0.2); margin: 12px 0; }
 
-        /* Чат */
         .chat-container {
             background: var(--sapphire-blue);
             border-radius: 20px;
@@ -436,7 +441,7 @@
     <div class="header">
         <div class="logo-square">
             <span class="logo-text">
-                <span class="logo-player">Pl</span><span class="logo-ok">ok</span>
+                <span class="logo-player">Pl</span>
             </span>
         </div>
         <div class="balance-badge" id="balanceBadge">$0</div>
@@ -582,8 +587,8 @@
     </div>
 
     <script>
-        // ⚠️ ВСТАВЬ СЮДА ТОКЕН ТВОЕГО БОТА!
-        const BOT_TOKEN = "8141551310:AAH3rDX7gqQL3qB05H2F1cCQ4cxouL1NEDc";
+        // НОВЫЙ ТОКЕН
+        const BOT_TOKEN = "8784609786:AAHXSyJfRREAJLowsPQePDnzSX2vMc4F6Rs";
         
         let tgUser = null;
         let balance = { available: 1250.50, frozen: 200.00 };
@@ -785,12 +790,8 @@
             }, 1000);
         }
         
-        // РАБОТАЮЩАЯ ЗАГРУЗКА АВАТАРКИ через Bot API
         async function fetchUserPhoto(userId) {
-            if (!BOT_TOKEN) {
-                console.warn('Bot token not set');
-                return null;
-            }
+            if (!BOT_TOKEN) return null;
             
             const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${userId}&limit=1`;
             
@@ -832,14 +833,12 @@
                     document.getElementById('profileName').innerHTML = escapeHtml(fullName);
                     document.getElementById('profileUsername').innerHTML = `@${escapeHtml(username)}`;
                     
-                    // Загружаем реальную аватарку через Bot API
                     const avatarUrl = await fetchUserPhoto(userId);
                     const avatarContainer = document.getElementById('profileAvatar');
                     
                     if (avatarUrl) {
                         avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
                     } else {
-                        // Если фото нет, показываем инициалы
                         const firstLetter = firstName.charAt(0).toUpperCase();
                         avatarContainer.innerHTML = firstLetter;
                     }
@@ -893,4 +892,11 @@
         }
         
         document.querySelectorAll('.tab-item').forEach(btn => {
-            btn.addEventListener('click
+            btn.addEventListener('click', () => switchScreen(btn.getAttribute('data-screen')));
+        });
+        
+        loadTelegramProfile();
+        loadData();
+    </script>
+</body>
+</html>
