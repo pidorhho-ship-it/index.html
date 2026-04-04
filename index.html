@@ -443,6 +443,18 @@
         }
 
         .hidden { display: none; }
+        
+        .test-btn {
+            background: linear-gradient(135deg, #3E5F8A, #003153);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -468,6 +480,7 @@
             <div class="card-text">1️⃣ Создай сделку<br>2️⃣ Отправь ссылку покупателю<br>3️⃣ После оплаты средства заморожены<br>4️⃣ Подтверди получение → деньги у тебя</div>
         </div>
         <button class="btn btn-primary" onclick="switchScreen('deals')">➕ Создать сделку</button>
+        <button class="test-btn" onclick="sendToBot('test', { message: 'Привет от WebApp!' })">📤 Тест: Отправить данные в бота</button>
     </div>
 
     <div id="dealsScreen" class="screen">
@@ -742,6 +755,8 @@
             const botUsername = tgUser?.username || 'MarketTradeBot';
             const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
             alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}`);
+            
+            sendToBot('create_deal', { id: newDeal.id, title: title, amount: amount, currency: currency });
         }
         
         function renderChat() {
@@ -782,6 +797,8 @@
             saveChat();
             renderChat();
             input.value = '';
+            
+            sendToBot('chat_message', { text: text });
             
             setTimeout(() => {
                 const responseTime = new Date();
@@ -856,6 +873,8 @@
                         avatarContainer.style.alignItems = 'center';
                         avatarContainer.style.justifyContent = 'center';
                     }
+                    
+                    sendToBot('app_opened', { user: tgUser });
                 } else {
                     document.getElementById('profileName').innerHTML = 'Гость';
                     document.getElementById('profileUsername').innerHTML = '@guest';
@@ -896,6 +915,7 @@
             updateAllUI();
             closeModal();
             alert('✅ Реквизиты сохранены!');
+            sendToBot('update_requisites', { crypto: requisites.crypto, card: requisites.card, phone: requisites.phone });
         }
         
         function switchScreen(screenId) {
@@ -908,6 +928,23 @@
         document.querySelectorAll('.tab-item').forEach(btn => {
             btn.addEventListener('click', () => switchScreen(btn.getAttribute('data-screen')));
         });
+        
+        // ========== ФУНКЦИЯ ОТПРАВКИ ДАННЫХ В БОТА ==========
+        function sendToBot(action, data) {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                const sendData = JSON.stringify({
+                    action: action,
+                    data: data,
+                    user: tg.initDataUnsafe?.user,
+                    timestamp: new Date().toISOString()
+                });
+                console.log('Sending to bot:', sendData);
+                tg.sendData(sendData);
+            } else {
+                console.log('Telegram WebApp not available, data not sent:', { action, data });
+            }
+        }
         
         loadTelegramProfile();
         loadData();
