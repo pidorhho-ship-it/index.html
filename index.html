@@ -504,7 +504,7 @@
     </div>
 
     <div class="tabbar">
-        <button class="tab-item active" data-screen="home"><span class="icon">🏠</span><span>Главная</span></button>
+        <button class="tab-item" data-screen="home"><span class="icon">🏠</span><span>Главная</span></button>
         <button class="tab-item" data-screen="deals"><span class="icon">📋</span><span>Сделки</span></button>
         <button class="tab-item" data-screen="profile"><span class="icon">👤</span><span>Профиль</span></button>
         <button class="tab-item" data-screen="support"><span class="icon">🛡️</span><span>Поддержка</span></button>
@@ -747,157 +747,171 @@
             }
         }
 
-// Обработчик данных, приходящих от бота
-if (window.Telegram && window.Telegram.WebApp) {
-    const tg = window.Telegram.WebApp;
-    
-    // Функция для обработки входящих данных
-    tg.onEvent('web_app_data', function(data) {
-        try {
-            const received = JSON.parse(data);
-            console.log('📩 Получено от бота:', received);
+        // ========== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==========
+        function switchScreen(screenName) {
+            // Скрываем все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            // Показываем выбранный
+            const targetScreen = document.getElementById(screenName + 'Screen');
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+            // Обновляем активный таб
+            document.querySelectorAll('.tab-item').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-screen') === screenName) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // ========== ФУНКЦИЯ ОТПРАВКИ ДАННЫХ В БОТА ==========
+        function sendToBot(action, data) {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                const sendData = JSON.stringify({
+                    action: action,
+                    data: data,
+                    user: tg.initDataUnsafe?.user,
+                    timestamp: new Date().toISOString()
+                });
+                console.log('Sending to bot:', sendData);
+                tg.sendData(sendData);
+            } else {
+                console.log('Telegram WebApp not available, data not sent:', { action, data });
+            }
+        }
+
+        // ========== ЗАГРУЗКА ПРОФИЛЯ ==========
+        async function loadTelegramProfile() {
+            console.log('🔍 Загрузка профиля...');
             
-            if (received.action === 'user_info_response') {
-                // Обновляем профиль данными от бота
-                if (received.user_id) {
-                    tgUser = {
-                        id: received.user_id,
-                        username: received.username,
-                        first_name: received.first_name
-                    };
-                    
-                    document.getElementById('profileName').innerHTML = escapeHtml(
-                        received.first_name || received.username || 'Пользователь'
-                    );
-                    
-                    let cleanUsername = received.username;
-                    if (cleanUsername && !cleanUsername.startsWith('@')) {
-                        cleanUsername = '@' + cleanUsername;
-                    }
-                    document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername || '@user');
-                    
-                    if (received.photo_url) {
-                        document.getElementById('profileAvatar').innerHTML = `<img src="${received.photo_url}" alt="avatar">`;
-                    }
-                    
-                    // Обновляем баланс
-                    updateAllUI();
+            let userId = null;
+            let userName = null;
+            let userFirstName = null;
+            let userLastName = null;
+            let userPhotoUrl = null;
+            
+            // СПОСОБ 1: Данные из Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    userId = tg.initDataUnsafe.user.id;
+                    userName = tg.initDataUnsafe.user.username;
+                    userFirstName = tg.initDataUnsafe.user.first_name;
+                    userLastName = tg.initDataUnsafe.user.last_name;
+                    userPhotoUrl = tg.initDataUnsafe.user.photo_url;
+                    console.log('✅ Данные из Telegram WebApp:', { userId, userName, userFirstName });
                 }
             }
-        } catch (e) {
-            console.error('Ошибка обработки данных от бота:', e);
+            
+            // СПОСОБ 2: Данные из URL
+            if (!userId) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlUserId = urlParams.get('user_id');
+                const urlUsername = urlParams.get('username');
+                const urlFirstName = urlParams.get('first_name');
+                
+                if (urlUserId) userId = urlUserId;
+                if (urlUsername) userName = decodeURIComponent(urlUsername);
+                if (urlFirstName) userFirstName = decodeURIComponent(urlFirstName);
+                console.log('📱 Данные из URL:', { userId, userName, userFirstName });
+            }
+            
+            // Если нет данных — запрос к боту
+            if (!userId) {
+                console.log('⚠️ Нет данных пользователя, запрашиваю у бота...');
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.sendData(JSON.stringify({ action: 'get_user_info' }));
+                }
+                document.getElementById('profileName').innerHTML = 'Гость';
+                document.getElementById('profileUsername').innerHTML = '@guest';
+                document.getElementById('profileAvatar').innerHTML = '👤';
+                return;
+            }
+            
+            // Показываем профиль
+            let displayName = 'Пользователь';
+            if (userFirstName) {
+                displayName = userFirstName;
+                if (userLastName) displayName += ' ' + userLastName;
+            } else if (userName) {
+                let cleanName = userName;
+                if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
+                displayName = cleanName;
+            }
+            
+            document.getElementById('profileName').innerHTML = escapeHtml(displayName);
+            
+            let cleanUsername = userName;
+            if (cleanUsername && !cleanUsername.startsWith('@')) cleanUsername = '@' + cleanUsername;
+            document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername || '@user');
+            
+            tgUser = { id: userId, username: userName || '', first_name: userFirstName || displayName };
+            
+            const avatarContainer = document.getElementById('profileAvatar');
+            if (userPhotoUrl) {
+                avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
+            } else if (userId) {
+                const avatarUrl = await fetchUserPhoto(userId);
+                avatarContainer.innerHTML = avatarUrl ? `<img src="${avatarUrl}" alt="avatar">` : '👤';
+            } else {
+                avatarContainer.innerHTML = '👤';
+            }
+            
+            sendToBot('app_opened', { user: tgUser });
+            console.log('✅ Профиль успешно загружен!');
         }
-    });
-}
-        
-        // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
-        // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
-// ========== ГЛАВНАЯ ФУНКЦИЯ - РАБОТАЕТ СО ВСЕМИ ТИПАМИ КНОПОК ==========
-// ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ПРОФИЛЯ ==========
-// ========== ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ПРОФИЛЯ ==========
-async function loadTelegramProfile() {
-    console.log('🔍 Загрузка профиля...');
-    
-    let userId = null;
-    let userName = null;
-    let userFirstName = null;
-    let userLastName = null;
-    let userPhotoUrl = null;
-    
-    // ===== СПОСОБ 1: Данные из Telegram WebApp (самый надежный) =====
-    if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            userId = tg.initDataUnsafe.user.id;
-            userName = tg.initDataUnsafe.user.username;
-            userFirstName = tg.initDataUnsafe.user.first_name;
-            userLastName = tg.initDataUnsafe.user.last_name;
-            userPhotoUrl = tg.initDataUnsafe.user.photo_url;
-            console.log('✅ Данные из Telegram WebApp:', { userId, userName, userFirstName });
-        }
-    }
-    
-    // ===== СПОСОБ 2: Данные из URL (кастомная кнопка) =====
-    if (!userId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlUserId = urlParams.get('user_id');
-        const urlUsername = urlParams.get('username');
-        const urlFirstName = urlParams.get('first_name');
-        
-        if (urlUserId) userId = urlUserId;
-        if (urlUsername) userName = decodeURIComponent(urlUsername);
-        if (urlFirstName) userFirstName = decodeURIComponent(urlFirstName);
-        console.log('📱 Данные из URL (кастомная кнопка):', { userId, userName, userFirstName });
-    }
-    
-    // ===== ЕСЛИ ВСЁ РАВНО НЕТ ДАННЫХ — ЗАПРОСИМ У БОТА =====
-    if (!userId) {
-        console.log('⚠️ Нет данных пользователя, запрашиваю у бота...');
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.sendData(JSON.stringify({ action: 'get_user_info' }));
-        }
-        document.getElementById('profileName').innerHTML = 'Загрузка...';
-        document.getElementById('profileUsername').innerHTML = '@loading';
-        document.getElementById('profileAvatar').innerHTML = '👤';
-        return;
-    }
-    
-    // ===== ПОКАЗЫВАЕМ ПРОФИЛЬ =====
-    let displayName = 'Пользователь';
-    if (userFirstName) {
-        displayName = userFirstName;
-        if (userLastName) displayName += ' ' + userLastName;
-    } else if (userName) {
-        let cleanName = userName;
-        if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
-        displayName = cleanName;
-    }
-    
-    document.getElementById('profileName').innerHTML = escapeHtml(displayName);
-    
-    let cleanUsername = userName;
-    if (cleanUsername && !cleanUsername.startsWith('@')) cleanUsername = '@' + cleanUsername;
-    document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername || '@user');
-    
-    tgUser = { id: userId, username: userName || '', first_name: userFirstName || displayName };
-    
-    const avatarContainer = document.getElementById('profileAvatar');
-    if (userPhotoUrl) {
-        avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
-    } else if (userId) {
-        const avatarUrl = await fetchUserPhoto(userId);
-        avatarContainer.innerHTML = avatarUrl ? `<img src="${avatarUrl}" alt="avatar">` : '👤';
-    } else {
-        avatarContainer.innerHTML = '👤';
-    }
-    
-    sendToBot('app_opened', { user: tgUser });
-    console.log('✅ Профиль успешно загружен!');
-}
 
-// ========== ФУНКЦИЯ ОТПРАВКИ ДАННЫХ В БОТА ==========
-function sendToBot(action, data) {
-    if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        const sendData = JSON.stringify({
-            action: action,
-            data: data,
-            user: tg.initDataUnsafe?.user,
-            timestamp: new Date().toISOString()
+        // ========== МОДАЛЬНЫЕ ОКНА ==========
+        function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
+        function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
+        
+        function copyDepositAddress() {
+            const address = document.getElementById('depositAddress').innerText;
+            navigator.clipboard.writeText(address);
+            alert('✅ Адрес скопирован!');
+        }
+        
+        function showWithdraw() { alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @MarketTradeSupport`); }
+        
+        function showRequisitesModal() {
+            document.getElementById('modalCrypto').value = requisites.crypto || '';
+            document.getElementById('modalCard').value = requisites.card || '';
+            document.getElementById('modalPhone').value = requisites.phone || '';
+            document.getElementById('requisitesModal').classList.remove('hidden');
+        }
+        
+        function closeModal() { document.getElementById('requisitesModal').classList.add('hidden'); }
+        
+        function saveRequisites() {
+            requisites.crypto = document.getElementById('modalCrypto').value;
+            requisites.card = document.getElementById('modalCard').value;
+            requisites.phone = document.getElementById('modalPhone').value;
+            saveRequisitesData();
+            updateAllUI();
+            closeModal();
+            alert('✅ Реквизиты сохранены!');
+            sendToBot('update_requisites', { crypto: requisites.crypto, card: requisites.card, phone: requisites.phone });
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        // Назначаем обработчики на табы
+        document.querySelectorAll('.tab-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const screenName = btn.getAttribute('data-screen');
+                switchScreen(screenName);
+            });
         });
-        console.log('Sending to bot:', sendData);
-        tg.sendData(sendData);
-    } else {
-        console.log('Telegram WebApp not available, data not sent:', { action, data });
-    }
-}
-
-// ========== ЗАПУСК ==========
-loadTelegramProfile();
-loadData();
+        
+        // Запускаем загрузку
+        loadTelegramProfile();
+        loadData();
     </script>
 </body>
 </html>
