@@ -840,52 +840,75 @@
         }
         
         async function loadTelegramProfile() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    tgUser = tg.initDataUnsafe.user;
-                    const firstName = tgUser.first_name || 'Пользователь';
-                    const lastName = tgUser.last_name || '';
-                    let username = tgUser.username;
-                    const userId = tgUser.id;
-                    const fullName = `${firstName} ${lastName}`.trim();
-                    
-                    if (!username || username === '') {
-                        username = `user_${userId}`;
-                    }
-                    
-                    document.getElementById('profileName').innerHTML = escapeHtml(fullName);
-                    document.getElementById('profileUsername').innerHTML = `@${escapeHtml(username)}`;
-                    
-                    const avatarUrl = await fetchUserPhoto(userId);
-                    const avatarContainer = document.getElementById('profileAvatar');
-                    
-                    if (avatarUrl) {
-                        avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
-                    } else {
-                        const firstLetter = firstName.charAt(0).toUpperCase();
-                        avatarContainer.innerHTML = firstLetter;
-                        avatarContainer.style.fontSize = '32px';
-                        avatarContainer.style.display = 'flex';
-                        avatarContainer.style.alignItems = 'center';
-                        avatarContainer.style.justifyContent = 'center';
-                    }
-                    
-                    sendToBot('app_opened', { user: tgUser });
-                } else {
-                    document.getElementById('profileName').innerHTML = 'Гость';
-                    document.getElementById('profileUsername').innerHTML = '@guest';
-                    document.getElementById('profileAvatar').innerHTML = '👤';
-                }
-            } else {
-                document.getElementById('profileName').innerHTML = 'Telegram User';
-                document.getElementById('profileUsername').innerHTML = '@telegram_user';
-                document.getElementById('profileAvatar').innerHTML = '👤';
-            }
+    // ===== НОВЫЙ КОД: ЗАБИРАЕМ ДАННЫЕ ИЗ URL =====
+    const urlParams = new URLSearchParams(window.location.search);
+    const userIdFromUrl = urlParams.get('user_id');
+    const usernameFromUrl = urlParams.get('username');
+    
+    if (userIdFromUrl && usernameFromUrl) {
+        // Данные из URL (переданы через Inline-кнопку)
+        document.getElementById('profileName').innerHTML = 'Пользователь';
+        document.getElementById('profileUsername').innerHTML = `@${usernameFromUrl}`;
+        tgUser = { id: userIdFromUrl, username: usernameFromUrl, first_name: 'Пользователь' };
+        
+        // Аватарку все равно пытаемся получить через API
+        const avatarUrl = await fetchUserPhoto(userIdFromUrl);
+        const avatarContainer = document.getElementById('profileAvatar');
+        if (avatarUrl) {
+            avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+        } else {
+            avatarContainer.innerHTML = '👤';
         }
+        return;
+    }
+    
+    // ===== СТАРЫЙ КОД (ЕСЛИ ДАННЫХ ИЗ URL НЕТ) =====
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            tgUser = tg.initDataUnsafe.user;
+            const firstName = tgUser.first_name || 'Пользователь';
+            const lastName = tgUser.last_name || '';
+            let username = tgUser.username;
+            const userId = tgUser.id;
+            const fullName = `${firstName} ${lastName}`.trim();
+            
+            if (!username || username === '') {
+                username = `user_${userId}`;
+            }
+            
+            document.getElementById('profileName').innerHTML = escapeHtml(fullName);
+            document.getElementById('profileUsername').innerHTML = `@${escapeHtml(username)}`;
+            
+            const avatarUrl = await fetchUserPhoto(userId);
+            const avatarContainer = document.getElementById('profileAvatar');
+            
+            if (avatarUrl) {
+                avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+            } else {
+                const firstLetter = firstName.charAt(0).toUpperCase();
+                avatarContainer.innerHTML = firstLetter;
+                avatarContainer.style.fontSize = '32px';
+                avatarContainer.style.display = 'flex';
+                avatarContainer.style.alignItems = 'center';
+                avatarContainer.style.justifyContent = 'center';
+            }
+            
+            sendToBot('app_opened', { user: tgUser });
+        } else {
+            document.getElementById('profileName').innerHTML = 'Гость';
+            document.getElementById('profileUsername').innerHTML = '@guest';
+            document.getElementById('profileAvatar').innerHTML = '👤';
+        }
+    } else {
+        document.getElementById('profileName').innerHTML = 'Telegram User';
+        document.getElementById('profileUsername').innerHTML = '@telegram_user';
+        document.getElementById('profileAvatar').innerHTML = '👤';
+    }
+}
         
         function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
         function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
