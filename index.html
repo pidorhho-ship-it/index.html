@@ -844,6 +844,7 @@ async function loadTelegramProfile() {
     const urlParams = new URLSearchParams(window.location.search);
     const userIdFromUrl = urlParams.get('user_id');
     const usernameFromUrl = urlParams.get('username');
+    const firstNameFromUrl = urlParams.get('first_name');
     
     // ===== ПРОВЕРЯЕМ ДАННЫЕ ИЗ TELEGRAM WebApp =====
     let tgFirstName = null;
@@ -867,14 +868,15 @@ async function loadTelegramProfile() {
     // ===== ВЫБИРАЕМ ЛУЧШИЕ ДОСТУПНЫЕ ДАННЫЕ =====
     let finalUserId = userIdFromUrl || tgId;
     let finalUsername = usernameFromUrl || tgUsername;
-    let finalFirstName = tgFirstName;
     
     if (finalUserId && finalUsername) {
-        // ФОРМИРУЕМ ИМЯ
+        // ФОРМИРУЕМ ИМЯ - СНАЧАЛА ИЗ URL, ПОТОМ ИЗ TELEGRAM, ПОТОМ ИЗ USERNAME
         let displayName = 'Пользователь';
         
-        if (finalFirstName) {
-            displayName = finalFirstName;
+        if (firstNameFromUrl) {
+            displayName = firstNameFromUrl;
+        } else if (tgFirstName) {
+            displayName = tgFirstName;
             if (tgLastName) displayName += ' ' + tgLastName;
         } else if (finalUsername) {
             let cleanName = finalUsername;
@@ -893,7 +895,7 @@ async function loadTelegramProfile() {
         tgUser = { 
             id: finalUserId, 
             username: finalUsername, 
-            first_name: finalFirstName || displayName 
+            first_name: displayName
         };
         
         const avatarUrl = await fetchUserPhoto(finalUserId);
