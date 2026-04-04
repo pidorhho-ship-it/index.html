@@ -10,24 +10,12 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             background: #0E294B;
             font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #eef2ff;
             padding-bottom: 80px;
         }
-
-        :root {
-            --berlin-blue: #003153;
-            --diamond-blue: #3E5F8A;
-            --gentian-blue: #0E294B;
-            --cobalt-blue: #1E213D;
-            --night-blue: #252850;
-            --sapphire-blue: #1D1E33;
-            --text-muted: #8DA9D4;
-        }
-
         .header {
             background: #0E294B;
             backdrop-filter: blur(12px);
@@ -40,7 +28,6 @@
             top: 0;
             z-index: 100;
         }
-
         .logo-square {
             width: 42px;
             height: 42px;
@@ -54,7 +41,6 @@
             position: relative;
             overflow: hidden;
         }
-        
         .logo-square::after {
             content: '';
             position: absolute;
@@ -66,7 +52,6 @@
             transform: rotate(25deg);
             pointer-events: none;
         }
-
         .logo-text {
             font-size: 20px;
             font-weight: 800;
@@ -75,7 +60,6 @@
             text-shadow: 0 0 4px rgba(255,255,255,0.5);
             z-index: 2;
         }
-
         .balance-badge {
             margin-left: auto;
             background: #1E213D;
@@ -86,20 +70,16 @@
             color: #3E5F8A;
             border: 1px solid #3E5F8A;
         }
-
         .screen {
             display: none;
             padding: 16px;
             animation: fadeInUp 0.3s ease;
         }
-
         .screen.active { display: block; }
-
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .card {
             background: #1D1E33;
             border-radius: 16px;
@@ -107,7 +87,6 @@
             margin-bottom: 14px;
             border: 1px solid #3E5F8A;
         }
-
         .card-title {
             font-size: 16px;
             font-weight: 600;
@@ -117,13 +96,11 @@
             gap: 8px;
             color: white;
         }
-
         .card-text {
             font-size: 14px;
             color: #8DA9D4;
             line-height: 1.45;
         }
-
         .tabbar {
             position: fixed;
             bottom: 0;
@@ -136,7 +113,6 @@
             padding: 8px 16px 22px;
             border-top: 1px solid #3E5F8A;
         }
-
         .tab-item {
             display: flex;
             flex-direction: column;
@@ -151,13 +127,11 @@
             padding: 8px 16px;
             border-radius: 12px;
         }
-
         .tab-item .icon { font-size: 22px; }
         .tab-item.active {
             color: #3E5F8A;
             background: rgba(62, 95, 138, 0.15);
         }
-
         .btn {
             border: none;
             padding: 16px 20px;
@@ -168,19 +142,16 @@
             cursor: pointer;
             color: white;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #3E5F8A, #003153);
             box-shadow: 0 6px 20px rgba(0, 49, 83, 0.4);
         }
-
         .btn-primary:active { transform: scale(0.97); }
         .btn-outline {
             background: transparent;
             border: 1.5px solid #3E5F8A;
             color: #3E5F8A;
         }
-
         .input-group { margin-bottom: 14px; }
         .input-label {
             font-size: 13px;
@@ -201,7 +172,6 @@
             outline: none;
             border-color: #3E5F8A;
         }
-
         .deal-card {
             background: #1D1E33;
             border-radius: 12px;
@@ -209,7 +179,6 @@
             margin-bottom: 12px;
             border-left: 3px solid #3E5F8A;
         }
-
         .deal-header {
             display: flex;
             justify-content: space-between;
@@ -217,7 +186,6 @@
             flex-wrap: wrap;
             gap: 6px;
         }
-
         .deal-id {
             font-size: 11px;
             color: #8DA9D4;
@@ -225,7 +193,6 @@
             padding: 2px 8px;
             border-radius: 20px;
         }
-
         .deal-status {
             font-size: 11px;
             padding: 3px 10px;
@@ -233,22 +200,18 @@
             background: rgba(62, 95, 138, 0.2);
             color: #3E5F8A;
         }
-
         .deal-status.completed {
             background: rgba(62, 95, 138, 0.15);
             color: #4ade80;
         }
-
         .deal-title { font-weight: 600; margin-bottom: 8px; font-size: 15px; }
         .deal-amount { font-size: 18px; font-weight: 700; color: #3E5F8A; }
-
         .profile-header {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 20px;
         }
-
         .profile-avatar {
             width: 70px;
             height: 70px;
@@ -264,26 +227,21 @@
             box-shadow: 0 0 0 3px rgba(62, 95, 138, 0.3);
             overflow: hidden;
         }
-        
         .profile-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .profile-info { flex: 1; }
         .profile-name { font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px; }
         .profile-username { font-size: 14px; color: #8DA9D4; }
-
         .balance-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
         }
-
         hr { border-color: #3E5F8A; margin: 12px 0; }
-
         .chat-container {
             background: #1D1E33;
             border-radius: 16px;
@@ -292,26 +250,22 @@
             flex-direction: column;
             height: 500px;
         }
-
         .chat-header {
             background: #1E213D;
             padding: 16px;
             border-bottom: 1px solid #3E5F8A;
         }
-
         .chat-header-title {
             font-size: 18px;
             font-weight: 700;
             color: #3E5F8A;
             letter-spacing: 2px;
         }
-
         .chat-header-sub {
             font-size: 12px;
             color: #8DA9D4;
             margin-top: 4px;
         }
-
         .chat-messages {
             flex: 1;
             padding: 16px;
@@ -322,42 +276,35 @@
             max-height: 350px;
             min-height: 350px;
         }
-
         .message {
             display: flex;
             flex-direction: column;
             max-width: 85%;
         }
-
         .message-user { align-self: flex-end; }
         .message-support { align-self: flex-start; }
-
         .message-bubble {
             padding: 10px 14px;
             border-radius: 12px;
             font-size: 14px;
             word-wrap: break-word;
         }
-
         .message-user .message-bubble {
             background: linear-gradient(135deg, #3E5F8A, #003153);
             color: white;
             border-bottom-right-radius: 4px;
         }
-
         .message-support .message-bubble {
             background: #1E213D;
             color: white;
             border-bottom-left-radius: 4px;
         }
-
         .message-meta {
             font-size: 10px;
             color: #8DA9D4;
             margin-top: 4px;
             padding: 0 8px;
         }
-
         .chat-input-area {
             padding: 16px;
             background: #1E213D;
@@ -365,7 +312,6 @@
             display: flex;
             gap: 10px;
         }
-
         .chat-input {
             flex: 1;
             padding: 12px 16px;
@@ -375,9 +321,7 @@
             color: white;
             font-size: 14px;
         }
-
         .chat-input:focus { outline: none; border-color: #3E5F8A; }
-
         .chat-send-btn {
             background: linear-gradient(135deg, #3E5F8A, #003153);
             border: none;
@@ -388,7 +332,6 @@
             font-size: 18px;
             cursor: pointer;
         }
-
         .disclaimer {
             font-size: 11px;
             color: #8DA9D4;
@@ -398,13 +341,11 @@
             border-radius: 12px;
             margin-top: 12px;
         }
-
         .empty-state {
             text-align: center;
             padding: 48px 20px;
             color: #8DA9D4;
         }
-
         .modal {
             position: fixed;
             top: 0;
@@ -419,7 +360,6 @@
             z-index: 300;
             padding: 20px;
         }
-
         .modal-content {
             background: #1D1E33;
             border-radius: 20px;
@@ -428,22 +368,18 @@
             max-width: 340px;
             border: 1px solid #3E5F8A;
         }
-
         .modal-title {
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 20px;
             color: white;
         }
-
         .modal-buttons {
             display: flex;
             gap: 12px;
             margin-top: 20px;
         }
-
         .hidden { display: none; }
-        
         .test-btn {
             background: linear-gradient(135deg, #3E5F8A, #003153);
             border: none;
@@ -619,19 +555,15 @@
         function loadData() {
             const savedDeals = localStorage.getItem('market_trade_deals');
             if (savedDeals) deals = JSON.parse(savedDeals);
-            
             const savedBalance = localStorage.getItem('market_trade_balance');
             if (savedBalance) balance = JSON.parse(savedBalance);
-            
             const savedRequisites = localStorage.getItem('market_trade_requisites');
             if (savedRequisites) requisites = JSON.parse(savedRequisites);
-            
             const savedChat = localStorage.getItem('market_trade_chat');
             if (savedChat) {
                 chatMessages = JSON.parse(savedChat);
                 renderChat();
             }
-            
             if (deals.length === 0) {
                 deals.push({
                     id: 'MT-100',
@@ -663,40 +595,33 @@
         
         function updateAllUI() {
             document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
-            
             const completed = deals.filter(d => d.status === 'completed').length;
             const activeTotal = deals.filter(d => d.status === 'active').reduce((sum, d) => sum + d.amount, 0);
             document.getElementById('statsText').innerHTML = `✅ Завершено сделок: ${completed}<br>💰 В обороте: $${activeTotal.toFixed(2)}`;
-            
             document.getElementById('availableBalance').innerHTML = `$${balance.available.toFixed(2)}`;
             document.getElementById('frozenBalance').innerHTML = `$${balance.frozen.toFixed(2)}`;
             document.getElementById('totalBalance').innerHTML = `$${(balance.available + balance.frozen).toFixed(2)}`;
-            
             let reqText = '';
             if (requisites.crypto) reqText += `💎 Крипто: ${requisites.crypto.substring(0, 12)}...\n`;
             if (requisites.card) reqText += `💳 Карта: ****${requisites.card.slice(-4)}\n`;
             if (requisites.phone) reqText += `📱 Телефон: ${requisites.phone}\n`;
             if (!reqText) reqText = '❌ Не указаны';
             document.getElementById('requisitesInfo').innerHTML = reqText.replace(/\n/g, '<br>');
-            
             renderDealsList();
         }
         
         function renderDealsList() {
             const container = document.getElementById('myDealsList');
             const myDeals = deals.filter(d => d.sellerId === 'me');
-            
             if (myDeals.length === 0) {
                 container.innerHTML = `<div class="empty-state">📭 У вас пока нет сделок<br>Создайте первую!</div>`;
                 return;
             }
-            
             let html = '';
             for (let deal of myDeals) {
                 const statusText = { active: '🟡 Активна', completed: '✅ Завершена', pending: '⏳ Ожидает' }[deal.status] || deal.status;
                 const statusClass = { active: '', completed: 'completed', pending: 'pending' }[deal.status] || '';
                 const date = new Date(deal.createdAt).toLocaleDateString('ru-RU');
-                
                 html += `
                     <div class="deal-card">
                         <div class="deal-header">
@@ -723,7 +648,6 @@
             const title = document.getElementById('dealTitle').value;
             const amount = parseFloat(document.getElementById('dealAmount').value);
             const currency = document.getElementById('dealCurrency').value;
-            
             if (!title || title.length < 3) {
                 alert('Введите название сделки (минимум 3 символа)');
                 return;
@@ -732,7 +656,6 @@
                 alert('Введите корректную сумму');
                 return;
             }
-            
             dealIdCounter++;
             const newDeal = {
                 id: `MT-${dealIdCounter}`,
@@ -743,26 +666,20 @@
                 createdAt: new Date().toISOString(),
                 sellerId: 'me'
             };
-            
             deals.unshift(newDeal);
             saveDeals();
-            
             document.getElementById('dealTitle').value = '';
             document.getElementById('dealAmount').value = '';
-            
             updateAllUI();
-            
             const botUsername = tgUser?.username || 'MarketTradeBot';
             const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
             alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}`);
-            
             sendToBot('create_deal', { id: newDeal.id, title: title, amount: amount, currency: currency });
         }
         
         function renderChat() {
             const container = document.getElementById('chatMessages');
             if (!container) return;
-            
             if (chatMessages.length === 0) {
                 container.innerHTML = `<div class="message message-support">
                     <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
@@ -770,7 +687,6 @@
                 </div>`;
                 return;
             }
-            
             let html = '';
             for (let msg of chatMessages) {
                 const isUser = msg.sender === 'user';
@@ -789,17 +705,13 @@
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if (!text) return;
-            
             const now = new Date();
             const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-            
             chatMessages.push({ sender: 'user', text: text, time: timeStr });
             saveChat();
             renderChat();
             input.value = '';
-            
             sendToBot('chat_message', { text: text });
-            
             setTimeout(() => {
                 const responseTime = new Date();
                 const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
@@ -815,19 +727,15 @@
         
         async function fetchUserPhoto(userId) {
             if (!BOT_TOKEN) return null;
-            
             const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${userId}&limit=1`;
-            
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                
                 if (data.ok && data.result && data.result.photos && data.result.photos.length > 0) {
                     const fileId = data.result.photos[0][0].file_id;
                     const fileUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`;
                     const fileRes = await fetch(fileUrl);
                     const fileData = await fileRes.json();
-                    
                     if (fileData.ok && fileData.result.file_path) {
                         return `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
                     }
@@ -839,82 +747,88 @@
             }
         }
         
-async function loadTelegramProfile() {
-    // ===== СНАЧАЛА ПРОВЕРЯЕМ ДАННЫЕ ИЗ URL =====
-    const urlParams = new URLSearchParams(window.location.search);
-    const userIdFromUrl = urlParams.get('user_id');
-    const usernameFromUrl = urlParams.get('username');
-    const firstNameFromUrl = urlParams.get('first_name');
-    
-    // ===== ПРОВЕРЯЕМ ДАННЫЕ ИЗ TELEGRAM WebApp =====
-    let tgFirstName = null;
-    let tgLastName = null;
-    let tgUsername = null;
-    let tgId = null;
-    
-    if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            tgFirstName = tg.initDataUnsafe.user.first_name;
-            tgLastName = tg.initDataUnsafe.user.last_name;
-            tgUsername = tg.initDataUnsafe.user.username;
-            tgId = tg.initDataUnsafe.user.id;
+        // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
+        async function loadTelegramProfile() {
+            console.log('🔍 Загрузка профиля...');
+            
+            let userId = null;
+            let userName = null;
+            let userFirstName = null;
+            let userLastName = null;
+            let userPhotoUrl = null;
+            
+            // ===== СПОСОБ 1: Данные из Telegram WebApp (Menu Button или Inline-кнопка) =====
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    userId = tg.initDataUnsafe.user.id;
+                    userName = tg.initDataUnsafe.user.username;
+                    userFirstName = tg.initDataUnsafe.user.first_name;
+                    userLastName = tg.initDataUnsafe.user.last_name;
+                    userPhotoUrl = tg.initDataUnsafe.user.photo_url;
+                    console.log('✅ Данные из Telegram WebApp:', { userId, userName, userFirstName, userLastName });
+                }
+            }
+            
+            // ===== СПОСОБ 2: Данные из URL (если не нашли в WebApp) =====
+            if (!userId) {
+                const urlParams = new URLSearchParams(window.location.search);
+                userId = urlParams.get('user_id');
+                userName = urlParams.get('username');
+                userFirstName = urlParams.get('first_name');
+                console.log('📱 Данные из URL:', { userId, userName, userFirstName });
+            }
+            
+            // ===== ЕСЛИ ЕСТЬ ДАННЫЕ - ПОКАЗЫВАЕМ ПРОФИЛЬ =====
+            if (userId && userName) {
+                // Формируем имя для отображения
+                let displayName = 'Пользователь';
+                if (userFirstName) {
+                    displayName = userFirstName;
+                    if (userLastName) displayName += ' ' + userLastName;
+                } else if (userName) {
+                    let cleanName = userName;
+                    if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
+                    displayName = cleanName;
+                }
+                
+                document.getElementById('profileName').innerHTML = escapeHtml(displayName);
+                
+                let cleanUsername = userName;
+                if (!cleanUsername.startsWith('@')) {
+                    cleanUsername = '@' + cleanUsername;
+                }
+                document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
+                
+                tgUser = { id: userId, username: userName, first_name: userFirstName || displayName };
+                
+                // Показываем аватарку
+                const avatarContainer = document.getElementById('profileAvatar');
+                if (userPhotoUrl) {
+                    avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
+                } else {
+                    const avatarUrl = await fetchUserPhoto(userId);
+                    if (avatarUrl) {
+                        avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+                    } else {
+                        avatarContainer.innerHTML = '👤';
+                    }
+                }
+                
+                sendToBot('app_opened', { user: tgUser });
+                console.log('✅ Профиль загружен:', displayName, cleanUsername);
+                return;
+            }
+            
+            // ===== ЕСЛИ НЕТ ДАННЫХ =====
+            console.log('❌ Нет данных пользователя');
+            document.getElementById('profileName').innerHTML = 'Гость';
+            document.getElementById('profileUsername').innerHTML = '@guest';
+            document.getElementById('profileAvatar').innerHTML = '👤';
         }
-    }
-    
-    // ===== ВЫБИРАЕМ ЛУЧШИЕ ДОСТУПНЫЕ ДАННЫЕ =====
-    let finalUserId = userIdFromUrl || tgId;
-    let finalUsername = usernameFromUrl || tgUsername;
-    
-    if (finalUserId && finalUsername) {
-        // ФОРМИРУЕМ ИМЯ - СНАЧАЛА ИЗ URL, ПОТОМ ИЗ TELEGRAM, ПОТОМ ИЗ USERNAME
-        let displayName = 'Пользователь';
-        
-        if (firstNameFromUrl) {
-            displayName = firstNameFromUrl;
-        } else if (tgFirstName) {
-            displayName = tgFirstName;
-            if (tgLastName) displayName += ' ' + tgLastName;
-        } else if (finalUsername) {
-            let cleanName = finalUsername;
-            if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
-            displayName = cleanName;
-        }
-        
-        document.getElementById('profileName').innerHTML = escapeHtml(displayName);
-        
-        let cleanUsername = finalUsername;
-        if (!cleanUsername.startsWith('@')) {
-            cleanUsername = '@' + cleanUsername;
-        }
-        document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
-        
-        tgUser = { 
-            id: finalUserId, 
-            username: finalUsername, 
-            first_name: displayName
-        };
-        
-        const avatarUrl = await fetchUserPhoto(finalUserId);
-        const avatarContainer = document.getElementById('profileAvatar');
-        if (avatarUrl) {
-            avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
-        } else {
-            avatarContainer.innerHTML = '👤';
-        }
-        
-        sendToBot('app_opened', { user: tgUser });
-        return;
-    }
-    
-    // ===== ЕСЛИ НЕТ НИКАКИХ ДАННЫХ =====
-    document.getElementById('profileName').innerHTML = 'Гость';
-    document.getElementById('profileUsername').innerHTML = '@guest';
-    document.getElementById('profileAvatar').innerHTML = '👤';
-}
         
         function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
         function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
