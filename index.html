@@ -847,7 +847,15 @@
     
     if (userIdFromUrl && usernameFromUrl) {
         // Данные из URL (переданы через Inline-кнопку)
-        document.getElementById('profileName').innerHTML = 'Пользователь';
+// Пытаемся получить имя из Telegram (если есть) или из URL
+let displayName = 'Пользователь';
+if (tgUser?.first_name) {
+    displayName = tgUser.first_name;
+    if (tgUser.last_name) displayName += ' ' + tgUser.last_name;
+} else if (usernameFromUrl) {
+    displayName = usernameFromUrl;
+}
+document.getElementById('profileName').innerHTML = escapeHtml(displayName);
         document.getElementById('profileUsername').innerHTML = `@${usernameFromUrl}`;
         tgUser = { id: userIdFromUrl, username: usernameFromUrl, first_name: 'Пользователь' };
         
