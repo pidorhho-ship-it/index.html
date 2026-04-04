@@ -870,25 +870,32 @@ async function loadTelegramProfile() {
     let finalFirstName = tgFirstName;
     
     if (finalUserId && finalUsername) {
-        // Формируем имя для отображения
-// Формируем имя для отображения
-let displayName = 'Пользователь';
-if (finalFirstName) {
-    displayName = finalFirstName;
-    if (tgLastName) displayName += ' ' + tgLastName;
-}
-// УБИРАЕМ else — НЕ подставляем username вместо имени
+        // ФОРМИРУЕМ ИМЯ
+        let displayName = 'Пользователь';
+        
+        if (finalFirstName) {
+            displayName = finalFirstName;
+            if (tgLastName) displayName += ' ' + tgLastName;
+        } else if (finalUsername) {
+            let cleanName = finalUsername;
+            if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
+            displayName = cleanName;
+        }
         
         document.getElementById('profileName').innerHTML = escapeHtml(displayName);
-        document.getElementById('profileUsername').innerHTML = `@${escapeHtml(finalUsername)}`;
+        
+        let cleanUsername = finalUsername;
+        if (!cleanUsername.startsWith('@')) {
+            cleanUsername = '@' + cleanUsername;
+        }
+        document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
         
         tgUser = { 
             id: finalUserId, 
             username: finalUsername, 
-            first_name: finalFirstName || 'Пользователь' 
+            first_name: finalFirstName || displayName 
         };
         
-        // Аватарку пытаемся получить через API
         const avatarUrl = await fetchUserPhoto(finalUserId);
         const avatarContainer = document.getElementById('profileAvatar');
         if (avatarUrl) {
@@ -897,7 +904,6 @@ if (finalFirstName) {
             avatarContainer.innerHTML = '👤';
         }
         
-        // Отправляем боту что приложение открыто
         sendToBot('app_opened', { user: tgUser });
         return;
     }
