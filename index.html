@@ -871,13 +871,13 @@ async function loadTelegramProfile() {
     
     if (finalUserId && finalUsername) {
         // Формируем имя для отображения
-        let displayName = 'Пользователь';
-        if (finalFirstName) {
-            displayName = finalFirstName;
-            if (tgLastName) displayName += ' ' + tgLastName;
-        } else {
-            displayName = finalUsername;
-        }
+// Формируем имя для отображения
+let displayName = 'Пользователь';
+if (finalFirstName) {
+    displayName = finalFirstName;
+    if (tgLastName) displayName += ' ' + tgLastName;
+}
+// УБИРАЕМ else — НЕ подставляем username вместо имени
         
         document.getElementById('profileName').innerHTML = escapeHtml(displayName);
         document.getElementById('profileUsername').innerHTML = `@${escapeHtml(finalUsername)}`;
