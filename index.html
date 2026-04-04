@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Playerok - Безопасные сделки</title>
+    <title>Market Trade - Безопасные сделки</title>
     <style>
         * {
             margin: 0;
@@ -45,22 +45,35 @@
             width: 42px;
             height: 42px;
             min-width: 42px;
-            background: linear-gradient(135deg, #3E5F8A, #003153);
+            background: linear-gradient(135deg, #2B5F8A, #1A3F5C, #0F2A3E);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 49, 83, 0.4);
+            box-shadow: 0 0 6px rgba(59, 130, 246, 0.6), 0 4px 12px rgba(0, 49, 83, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-square::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(25deg);
+            pointer-events: none;
         }
 
         .logo-text {
             font-size: 20px;
             font-weight: 800;
             letter-spacing: -0.5px;
-        }
-
-        .logo-player {
             color: white;
+            text-shadow: 0 0 4px rgba(255,255,255,0.5);
+            z-index: 2;
         }
 
         .balance-badge {
@@ -436,16 +449,14 @@
 
     <div class="header">
         <div class="logo-square">
-            <span class="logo-text">
-                <span class="logo-player">Pl</span>
-            </span>
+            <span class="logo-text">MT</span>
         </div>
         <div class="balance-badge" id="balanceBadge">$0</div>
     </div>
 
     <div id="homeScreen" class="screen active">
         <div class="card">
-            <div class="card-title">🔥 Добро пожаловать!</div>
+            <div class="card-title">🔥 Добро пожаловать в Market Trade!</div>
             <div class="card-text">Безопасные сделки между игроками. Комиссия 5%.</div>
         </div>
         <div class="card">
@@ -593,16 +604,16 @@
         let chatMessages = [];
 
         function loadData() {
-            const savedDeals = localStorage.getItem('playerok_deals');
+            const savedDeals = localStorage.getItem('market_trade_deals');
             if (savedDeals) deals = JSON.parse(savedDeals);
             
-            const savedBalance = localStorage.getItem('playerok_balance');
+            const savedBalance = localStorage.getItem('market_trade_balance');
             if (savedBalance) balance = JSON.parse(savedBalance);
             
-            const savedRequisites = localStorage.getItem('playerok_requisites');
+            const savedRequisites = localStorage.getItem('market_trade_requisites');
             if (savedRequisites) requisites = JSON.parse(savedRequisites);
             
-            const savedChat = localStorage.getItem('playerok_chat');
+            const savedChat = localStorage.getItem('market_trade_chat');
             if (savedChat) {
                 chatMessages = JSON.parse(savedChat);
                 renderChat();
@@ -610,7 +621,7 @@
             
             if (deals.length === 0) {
                 deals.push({
-                    id: 'PL-100',
+                    id: 'MT-100',
                     title: 'Аккаунт CS2 Prime',
                     amount: 45,
                     currency: 'USD',
@@ -619,7 +630,7 @@
                     sellerId: 'me'
                 });
                 deals.push({
-                    id: 'PL-099',
+                    id: 'MT-099',
                     title: '1000 золота WoW',
                     amount: 25,
                     currency: 'USD',
@@ -632,10 +643,10 @@
             updateAllUI();
         }
         
-        function saveDeals() { localStorage.setItem('playerok_deals', JSON.stringify(deals)); }
-        function saveBalance() { localStorage.setItem('playerok_balance', JSON.stringify(balance)); }
-        function saveRequisitesData() { localStorage.setItem('playerok_requisites', JSON.stringify(requisites)); }
-        function saveChat() { localStorage.setItem('playerok_chat', JSON.stringify(chatMessages)); }
+        function saveDeals() { localStorage.setItem('market_trade_deals', JSON.stringify(deals)); }
+        function saveBalance() { localStorage.setItem('market_trade_balance', JSON.stringify(balance)); }
+        function saveRequisitesData() { localStorage.setItem('market_trade_requisites', JSON.stringify(requisites)); }
+        function saveChat() { localStorage.setItem('market_trade_chat', JSON.stringify(chatMessages)); }
         
         function updateAllUI() {
             document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
@@ -711,7 +722,7 @@
             
             dealIdCounter++;
             const newDeal = {
-                id: `PL-${dealIdCounter}`,
+                id: `MT-${dealIdCounter}`,
                 title: title,
                 amount: amount,
                 currency: currency,
@@ -728,7 +739,7 @@
             
             updateAllUI();
             
-            const botUsername = tgUser?.username || 'PlayerokBot';
+            const botUsername = tgUser?.username || 'MarketTradeBot';
             const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
             alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}`);
         }
@@ -821,9 +832,13 @@
                     tgUser = tg.initDataUnsafe.user;
                     const firstName = tgUser.first_name || 'Пользователь';
                     const lastName = tgUser.last_name || '';
-                    const username = tgUser.username || 'no_username';
+                    let username = tgUser.username;
                     const userId = tgUser.id;
                     const fullName = `${firstName} ${lastName}`.trim();
+                    
+                    if (!username || username === '') {
+                        username = `user_${userId}`;
+                    }
                     
                     document.getElementById('profileName').innerHTML = escapeHtml(fullName);
                     document.getElementById('profileUsername').innerHTML = `@${escapeHtml(username)}`;
@@ -836,6 +851,10 @@
                     } else {
                         const firstLetter = firstName.charAt(0).toUpperCase();
                         avatarContainer.innerHTML = firstLetter;
+                        avatarContainer.style.fontSize = '32px';
+                        avatarContainer.style.display = 'flex';
+                        avatarContainer.style.alignItems = 'center';
+                        avatarContainer.style.justifyContent = 'center';
                     }
                 } else {
                     document.getElementById('profileName').innerHTML = 'Гость';
@@ -858,7 +877,7 @@
             alert('✅ Адрес скопирован!');
         }
         
-        function showWithdraw() { alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @PlayerokSupport`); }
+        function showWithdraw() { alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @MarketTradeSupport`); }
         
         function showRequisitesModal() {
             document.getElementById('modalCrypto').value = requisites.crypto || '';
