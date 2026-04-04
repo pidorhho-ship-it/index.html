@@ -401,8 +401,7 @@
         </div>
         <div class="balance-badge" id="balanceBadge">$0</div>
     </div>
-
-    <div id="homeScreen" class="screen active">
+        <div id="homeScreen" class="screen active">
         <div class="card">
             <div class="card-title">🔥 Добро пожаловать в Market Trade!</div>
             <div class="card-text">Безопасные сделки между игроками. Комиссия 5%.</div>
@@ -480,8 +479,7 @@
             <button class="btn btn-outline" style="margin-top: 12px;" onclick="showRequisitesModal()">✏️ Редактировать</button>
         </div>
     </div>
-
-    <div id="supportScreen" class="screen">
+        <div id="supportScreen" class="screen">
         <div class="chat-container">
             <div class="chat-header">
                 <div class="chat-header-title">П О Д Д Е Р Ж К А</div>
@@ -746,36 +744,32 @@
                 return null;
             }
         }
-
-        // ========== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==========
+                // ========== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==========
         function switchScreen(screenName) {
-    console.log('Переключение на экран:', screenName);
-    
-    // Скрываем все экраны
-    const screens = ['homeScreen', 'dealsScreen', 'profileScreen', 'supportScreen'];
-    screens.forEach(screenId => {
-        const el = document.getElementById(screenId);
-        if (el) el.classList.remove('active');
-    });
-    
-    // Показываем выбранный
-    const targetId = screenName + 'Screen';
-    const targetScreen = document.getElementById(targetId);
-    if (targetScreen) {
-        targetScreen.classList.add('active');
-        console.log('Показан экран:', targetId);
-    } else {
-        console.error('Экран не найден:', targetId);
-    }
-    
-    // Обновляем активный таб
-    document.querySelectorAll('.tab-item').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-screen') === screenName) {
-            btn.classList.add('active');
+            console.log('Переключение на экран:', screenName);
+            
+            const screens = ['homeScreen', 'dealsScreen', 'profileScreen', 'supportScreen'];
+            screens.forEach(screenId => {
+                const el = document.getElementById(screenId);
+                if (el) el.classList.remove('active');
+            });
+            
+            const targetId = screenName + 'Screen';
+            const targetScreen = document.getElementById(targetId);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+                console.log('Показан экран:', targetId);
+            } else {
+                console.error('Экран не найден:', targetId);
+            }
+            
+            document.querySelectorAll('.tab-item').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-screen') === screenName) {
+                    btn.classList.add('active');
+                }
+            });
         }
-    });
-}
 
         // ========== ФУНКЦИЯ ОТПРАВКИ ДАННЫХ В БОТА ==========
         function sendToBot(action, data) {
@@ -804,7 +798,6 @@
             let userLastName = null;
             let userPhotoUrl = null;
             
-            // СПОСОБ 1: Данные из Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.ready();
@@ -820,7 +813,6 @@
                 }
             }
             
-            // СПОСОБ 2: Данные из URL
             if (!userId) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const urlUserId = urlParams.get('user_id');
@@ -833,7 +825,6 @@
                 console.log('📱 Данные из URL:', { userId, userName, userFirstName });
             }
             
-            // Если нет данных — запрос к боту
             if (!userId) {
                 console.log('⚠️ Нет данных пользователя, запрашиваю у бота...');
                 if (window.Telegram && window.Telegram.WebApp) {
@@ -845,7 +836,6 @@
                 return;
             }
             
-            // Показываем профиль
             let displayName = 'Пользователь';
             if (userFirstName) {
                 displayName = userFirstName;
@@ -911,7 +901,6 @@
         }
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
-        // Назначаем обработчики на табы
         document.querySelectorAll('.tab-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 const screenName = btn.getAttribute('data-screen');
@@ -919,7 +908,6 @@
             });
         });
         
-        // Запускаем загрузку
         loadTelegramProfile();
         loadData();
     </script>
