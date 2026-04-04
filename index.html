@@ -748,87 +748,98 @@
         }
         
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
-        async function loadTelegramProfile() {
-            console.log('🔍 Загрузка профиля...');
-            
-            let userId = null;
-            let userName = null;
-            let userFirstName = null;
-            let userLastName = null;
-            let userPhotoUrl = null;
-            
-            // ===== СПОСОБ 1: Данные из Telegram WebApp (Menu Button или Inline-кнопка) =====
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    userId = tg.initDataUnsafe.user.id;
-                    userName = tg.initDataUnsafe.user.username;
-                    userFirstName = tg.initDataUnsafe.user.first_name;
-                    userLastName = tg.initDataUnsafe.user.last_name;
-                    userPhotoUrl = tg.initDataUnsafe.user.photo_url;
-                    console.log('✅ Данные из Telegram WebApp:', { userId, userName, userFirstName, userLastName });
-                }
-            }
-            
-            // ===== СПОСОБ 2: Данные из URL (если не нашли в WebApp) =====
-            if (!userId) {
-                const urlParams = new URLSearchParams(window.location.search);
-                userId = urlParams.get('user_id');
-                userName = urlParams.get('username');
-                userFirstName = urlParams.get('first_name');
-                console.log('📱 Данные из URL:', { userId, userName, userFirstName });
-            }
-            
-            // ===== ЕСЛИ ЕСТЬ ДАННЫЕ - ПОКАЗЫВАЕМ ПРОФИЛЬ =====
-            if (userId && userName) {
-                // Формируем имя для отображения
-                let displayName = 'Пользователь';
-                if (userFirstName) {
-                    displayName = userFirstName;
-                    if (userLastName) displayName += ' ' + userLastName;
-                } else if (userName) {
-                    let cleanName = userName;
-                    if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
-                    displayName = cleanName;
-                }
-                
-                document.getElementById('profileName').innerHTML = escapeHtml(displayName);
-                
-                let cleanUsername = userName;
-                if (!cleanUsername.startsWith('@')) {
-                    cleanUsername = '@' + cleanUsername;
-                }
-                document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
-                
-                tgUser = { id: userId, username: userName, first_name: userFirstName || displayName };
-                
-                // Показываем аватарку
-                const avatarContainer = document.getElementById('profileAvatar');
-                if (userPhotoUrl) {
-                    avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
-                } else {
-                    const avatarUrl = await fetchUserPhoto(userId);
-                    if (avatarUrl) {
-                        avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
-                    } else {
-                        avatarContainer.innerHTML = '👤';
-                    }
-                }
-                
-                sendToBot('app_opened', { user: tgUser });
-                console.log('✅ Профиль загружен:', displayName, cleanUsername);
-                return;
-            }
-            
-            // ===== ЕСЛИ НЕТ ДАННЫХ =====
-            console.log('❌ Нет данных пользователя');
-            document.getElementById('profileName').innerHTML = 'Гость';
-            document.getElementById('profileUsername').innerHTML = '@guest';
-            document.getElementById('profileAvatar').innerHTML = '👤';
+        // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
+async function loadTelegramProfile() {
+    console.log('🔍 Загрузка профиля...');
+    
+    let userId = null;
+    let userName = null;
+    let userFirstName = null;
+    let userLastName = null;
+    let userPhotoUrl = null;
+    
+    // ===== СПОСОБ 1: Данные из Telegram WebApp (Menu Button или Inline-кнопка) =====
+    if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        console.log('📱 Telegram WebApp object:', tg);
+        console.log('📱 initDataUnsafe:', tg.initDataUnsafe);
+        
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userId = tg.initDataUnsafe.user.id;
+            userName = tg.initDataUnsafe.user.username;
+            userFirstName = tg.initDataUnsafe.user.first_name;
+            userLastName = tg.initDataUnsafe.user.last_name;
+            userPhotoUrl = tg.initDataUnsafe.user.photo_url;
+            console.log('✅ Данные из Telegram WebApp:', { userId, userName, userFirstName, userLastName });
+        } else {
+            console.log('⚠️ initDataUnsafe.user пуст, пробуем URL...');
         }
+    }
+    
+    // ===== СПОСОБ 2: Данные из URL (если не нашли в WebApp) =====
+    if (!userId) {
+        const urlParams = new URLSearchParams(window.location.search);
+        userId = urlParams.get('user_id');
+        let rawUsername = urlParams.get('username');
+        let rawFirstName = urlParams.get('first_name');
+        
+        // Декодируем URL-encoded строки
+        if (rawUsername) userName = decodeURIComponent(rawUsername);
+        if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
+        
+        console.log('📱 Данные из URL (декодированные):', { userId, userName, userFirstName });
+    }
+    
+    // ===== ЕСЛИ ЕСТЬ ДАННЫЕ - ПОКАЗЫВАЕМ ПРОФИЛЬ =====
+    if (userId && userName) {
+        // Формируем имя для отображения
+        let displayName = 'Пользователь';
+        if (userFirstName) {
+            displayName = userFirstName;
+            if (userLastName) displayName += ' ' + userLastName;
+        } else if (userName) {
+            let cleanName = userName;
+            if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
+            displayName = cleanName;
+        }
+        
+        document.getElementById('profileName').innerHTML = escapeHtml(displayName);
+        
+        let cleanUsername = userName;
+        if (!cleanUsername.startsWith('@')) {
+            cleanUsername = '@' + cleanUsername;
+        }
+        document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
+        
+        tgUser = { id: userId, username: userName, first_name: userFirstName || displayName };
+        
+        // Показываем аватарку
+        const avatarContainer = document.getElementById('profileAvatar');
+        if (userPhotoUrl) {
+            avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
+        } else {
+            const avatarUrl = await fetchUserPhoto(userId);
+            if (avatarUrl) {
+                avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+            } else {
+                avatarContainer.innerHTML = '👤';
+            }
+        }
+        
+        sendToBot('app_opened', { user: tgUser });
+        console.log('✅ Профиль загружен:', displayName, cleanUsername);
+        return;
+    }
+    
+    // ===== ЕСЛИ НЕТ ДАННЫХ =====
+    console.log('❌ Нет данных пользователя');
+    document.getElementById('profileName').innerHTML = 'Гость';
+    document.getElementById('profileUsername').innerHTML = '@guest';
+    document.getElementById('profileAvatar').innerHTML = '👤';
+}
         
         function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
         function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
