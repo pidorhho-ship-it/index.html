@@ -748,24 +748,34 @@
         }
 
         // ========== ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ==========
-        function switchScreen(screenName) {
-            // Скрываем все экраны
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            // Показываем выбранный
-            const targetScreen = document.getElementById(screenName + 'Screen');
-            if (targetScreen) {
-                targetScreen.classList.add('active');
-            }
-            // Обновляем активный таб
-            document.querySelectorAll('.tab-item').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-screen') === screenName) {
-                    btn.classList.add('active');
-                }
-            });
+        ffunction switchScreen(screenName) {
+    console.log('Переключение на экран:', screenName);
+    
+    // Скрываем все экраны
+    const screens = ['homeScreen', 'dealsScreen', 'profileScreen', 'supportScreen'];
+    screens.forEach(screenId => {
+        const el = document.getElementById(screenId);
+        if (el) el.classList.remove('active');
+    });
+    
+    // Показываем выбранный
+    const targetId = screenName + 'Screen';
+    const targetScreen = document.getElementById(targetId);
+    if (targetScreen) {
+        targetScreen.classList.add('active');
+        console.log('Показан экран:', targetId);
+    } else {
+        console.error('Экран не найден:', targetId);
+    }
+    
+    // Обновляем активный таб
+    document.querySelectorAll('.tab-item').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-screen') === screenName) {
+            btn.classList.add('active');
         }
+    });
+}
 
         // ========== ФУНКЦИЯ ОТПРАВКИ ДАННЫХ В БОТА ==========
         function sendToBot(action, data) {
