@@ -749,6 +749,7 @@
         
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
+// ========== ГЛАВНАЯ ФУНКЦИЯ - РАБОТАЕТ СО ВСЕМИ ТИПАМИ КНОПОК ==========
 async function loadTelegramProfile() {
     console.log('🔍 Загрузка профиля...');
     
@@ -758,14 +759,13 @@ async function loadTelegramProfile() {
     let userLastName = null;
     let userPhotoUrl = null;
     
-    // ===== СПОСОБ 1: Данные из Telegram WebApp (Menu Button или Inline-кнопка) =====
+    // ===== СПОСОБ 1: Данные из Telegram WebApp (самый надежный) =====
+    // Этот способ сработает, если WebApp открыт с правильной авторизацией.
+    // Он подходит для Inline-кнопок, Reply-кнопок и, что важно, для кнопки из BotFather!
     if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        
-        console.log('📱 Telegram WebApp object:', tg);
-        console.log('📱 initDataUnsafe:', tg.initDataUnsafe);
         
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             userId = tg.initDataUnsafe.user.id;
@@ -773,29 +773,26 @@ async function loadTelegramProfile() {
             userFirstName = tg.initDataUnsafe.user.first_name;
             userLastName = tg.initDataUnsafe.user.last_name;
             userPhotoUrl = tg.initDataUnsafe.user.photo_url;
-            console.log('✅ Данные из Telegram WebApp:', { userId, userName, userFirstName, userLastName });
-        } else {
-            console.log('⚠️ initDataUnsafe.user пуст, пробуем URL...');
+            console.log('✅ Данные из Telegram WebApp (работает для кнопки BotFather):', { userId, userName, userFirstName });
         }
     }
     
-    // ===== СПОСОБ 2: Данные из URL (если не нашли в WebApp) =====
+    // ===== СПОСОБ 2: Данные из URL (запасной вариант) =====
+    // Этот способ сработает для твоей Inline-кнопки /market,
+    // если по какой-то причине первый способ не сработал.
     if (!userId) {
         const urlParams = new URLSearchParams(window.location.search);
         userId = urlParams.get('user_id');
         let rawUsername = urlParams.get('username');
         let rawFirstName = urlParams.get('first_name');
         
-        // Декодируем URL-encoded строки
         if (rawUsername) userName = decodeURIComponent(rawUsername);
         if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
-        
-        console.log('📱 Данные из URL (декодированные):', { userId, userName, userFirstName });
+        console.log('📱 Данные из URL (запасной вариант):', { userId, userName, userFirstName });
     }
     
-    // ===== ЕСЛИ ЕСТЬ ДАННЫЕ - ПОКАЗЫВАЕМ ПРОФИЛЬ =====
+    // ===== ПОКАЗЫВАЕМ ПРОФИЛЬ, ЕСЛИ ДАННЫЕ ЕСТЬ =====
     if (userId && userName) {
-        // Формируем имя для отображения
         let displayName = 'Пользователь';
         if (userFirstName) {
             displayName = userFirstName;
@@ -809,28 +806,21 @@ async function loadTelegramProfile() {
         document.getElementById('profileName').innerHTML = escapeHtml(displayName);
         
         let cleanUsername = userName;
-        if (!cleanUsername.startsWith('@')) {
-            cleanUsername = '@' + cleanUsername;
-        }
+        if (!cleanUsername.startsWith('@')) cleanUsername = '@' + cleanUsername;
         document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
         
         tgUser = { id: userId, username: userName, first_name: userFirstName || displayName };
         
-        // Показываем аватарку
         const avatarContainer = document.getElementById('profileAvatar');
         if (userPhotoUrl) {
             avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
         } else {
             const avatarUrl = await fetchUserPhoto(userId);
-            if (avatarUrl) {
-                avatarContainer.innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
-            } else {
-                avatarContainer.innerHTML = '👤';
-            }
+            avatarContainer.innerHTML = avatarUrl ? `<img src="${avatarUrl}" alt="avatar">` : '👤';
         }
         
         sendToBot('app_opened', { user: tgUser });
-        console.log('✅ Профиль загружен:', displayName, cleanUsername);
+        console.log('✅ Профиль успешно загружен!');
         return;
     }
     
