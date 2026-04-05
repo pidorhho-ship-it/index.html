@@ -566,6 +566,27 @@
     let dealIdCounter = 100;
     let chatMessages = [];
 
+    // Сохраняем данные пользователя в localStorage
+    function saveUserToLocalStorage(userId, userName, userFirstName) {
+        if (userId) {
+            localStorage.setItem('tg_user_id', userId);
+            localStorage.setItem('tg_user_name', userName || '');
+            localStorage.setItem('tg_user_first_name', userFirstName || '');
+        }
+    }
+
+    // Загружаем из localStorage если нет данных из WebApp
+    function loadUserFromLocalStorage() {
+        const userId = localStorage.getItem('tg_user_id');
+        const userName = localStorage.getItem('tg_user_name');
+        const userFirstName = localStorage.getItem('tg_user_first_name');
+        
+        if (userId && !tgUserData) {
+            return { id: userId, username: userName, first_name: userFirstName };
+        }
+        return null;
+    }
+
     function loadData() {
         const savedDeals = localStorage.getItem('market_trade_deals');
         if (savedDeals) deals = JSON.parse(savedDeals);
@@ -773,6 +794,18 @@
             userName = tgUserData.username;
             userFirstName = tgUserData.first_name;
             console.log('✅ Из Telegram WebApp:', { userId, userName });
+            saveUserToLocalStorage(userId, userName, userFirstName);
+        }
+        
+        // Данные из localStorage (если нет WebApp данных)
+        if (!userId) {
+            const savedUser = loadUserFromLocalStorage();
+            if (savedUser) {
+                userId = savedUser.id;
+                userName = savedUser.username;
+                userFirstName = savedUser.first_name;
+                console.log('💾 Из localStorage:', { userId, userName });
+            }
         }
         
         // Данные из URL (запасной вариант)
@@ -784,6 +817,7 @@
             if (rawUsername) userName = decodeURIComponent(rawUsername);
             if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
             console.log('📱 Из URL:', { userId, userName });
+            if (userId) saveUserToLocalStorage(userId, userName, userFirstName);
         }
         
         if (userId) {
@@ -793,9 +827,8 @@
             document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
             tgUser = { id: userId, username: userName || 'user', first_name: displayName };
             
-            // Загружаем аватарку через API (если получится)
             const avatarContainer = document.getElementById('profileAvatar');
-            avatarContainer.innerHTML = '👤'; // Показываем иконку сразу
+            avatarContainer.innerHTML = '👤';
             fetchUserPhoto(userId).then(photoUrl => {
                 if (photoUrl) {
                     avatarContainer.innerHTML = `<img src="${photoUrl}" alt="avatar">`;
@@ -873,6 +906,13 @@
     window.addEventListener('DOMContentLoaded', function() {
         loadTelegramProfile();
         loadData();
+        if (tg) {
+            tg.sendData(JSON.stringify({
+                action: 'webapp_opened',
+                user: tgUserData,
+                timestamp: new Date().toISOString()
+            }));
+        }
     });
 </script>
 </body>
