@@ -759,10 +759,17 @@ async function loadTelegramProfile() {
     let userLastName = null;
     let userPhotoUrl = null;
     
-    // ===== СПОСОБ 1: Данные из Telegram WebApp (самый надежный) =====
-    // Этот способ сработает, если WebApp открыт с правильной авторизацией.
-    // Он подходит для Inline-кнопок, Reply-кнопок и, что важно, для кнопки из BotFather!
-    if (window.Telegram && window.Telegram.WebApp) {
+    // ===== СПОСОБ 1: Данные из URL (приоритетный для кнопки /start) =====
+    const urlParams = new URLSearchParams(window.location.search);
+    userId = urlParams.get('user_id');
+    let rawUsername = urlParams.get('username');
+    let rawFirstName = urlParams.get('first_name');
+    
+    if (rawUsername) userName = decodeURIComponent(rawUsername);
+    if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
+    
+    // ===== СПОСОБ 2: Данные из Telegram WebApp (если нет в URL) =====
+    if (!userId && window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -773,43 +780,21 @@ async function loadTelegramProfile() {
             userFirstName = tg.initDataUnsafe.user.first_name;
             userLastName = tg.initDataUnsafe.user.last_name;
             userPhotoUrl = tg.initDataUnsafe.user.photo_url;
-            console.log('✅ Данные из Telegram WebApp (работает для кнопки BotFather):', { userId, userName, userFirstName });
+            console.log('✅ Данные из Telegram WebApp');
         }
     }
     
-    // ===== СПОСОБ 2: Данные из URL (запасной вариант) =====
-    // Этот способ сработает для твоей Inline-кнопки /market,
-    // если по какой-то причине первый способ не сработал.
-    if (!userId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        userId = urlParams.get('user_id');
-        let rawUsername = urlParams.get('username');
-        let rawFirstName = urlParams.get('first_name');
-        
-        if (rawUsername) userName = decodeURIComponent(rawUsername);
-        if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
-        console.log('📱 Данные из URL (запасной вариант):', { userId, userName, userFirstName });
-    }
-    
-    // ===== ПОКАЗЫВАЕМ ПРОФИЛЬ, ЕСЛИ ДАННЫЕ ЕСТЬ =====
-    if (userId && userName) {
-        let displayName = 'Пользователь';
-        if (userFirstName) {
-            displayName = userFirstName;
-            if (userLastName) displayName += ' ' + userLastName;
-        } else if (userName) {
-            let cleanName = userName;
-            if (cleanName.startsWith('@')) cleanName = cleanName.substring(1);
-            displayName = cleanName;
-        }
+    // ===== ПОКАЗЫВАЕМ ПРОФИЛЬ =====
+    if (userId) {
+        let displayName = userFirstName || 'Пользователь';
+        if (userLastName) displayName += ' ' + userLastName;
         
         document.getElementById('profileName').innerHTML = escapeHtml(displayName);
         
-        let cleanUsername = userName;
-        if (!cleanUsername.startsWith('@')) cleanUsername = '@' + cleanUsername;
+        let cleanUsername = userName ? (userName.startsWith('@') ? userName : '@' + userName) : '@user';
         document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
         
-        tgUser = { id: userId, username: userName, first_name: userFirstName || displayName };
+        tgUser = { id: userId, username: userName || 'user', first_name: displayName };
         
         const avatarContainer = document.getElementById('profileAvatar');
         if (userPhotoUrl) {
@@ -820,11 +805,11 @@ async function loadTelegramProfile() {
         }
         
         sendToBot('app_opened', { user: tgUser });
-        console.log('✅ Профиль успешно загружен!');
+        console.log('✅ Профиль загружен!', userId, userName);
         return;
     }
     
-    // ===== ЕСЛИ НЕТ ДАННЫХ =====
+    // ===== ГОСТЬ =====
     console.log('❌ Нет данных пользователя');
     document.getElementById('profileName').innerHTML = 'Гость';
     document.getElementById('profileUsername').innerHTML = '@guest';
