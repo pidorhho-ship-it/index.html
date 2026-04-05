@@ -542,7 +542,22 @@
         </div>
     </div>
 
+
+    
     <script>
+
+// ПОДКЛЮЧАЕМ Telegram WebApp МГНОВЕННО
+let tg = null;
+let tgUserData = null;
+
+if (window.Telegram && window.Telegram.WebApp) {
+    tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    tgUserData = tg.initDataUnsafe?.user || null;
+    console.log('✅ Telegram WebApp:', tgUserData);
+}
+        
         const BOT_TOKEN = "8784609786:AAHXSyJfRREAJLowsPQePDnzSX2vMc4F6Rs";
         
         let tgUser = null;
@@ -729,7 +744,7 @@
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
 // ========== ГЛАВНАЯ ФУНКЦИЯ - РАБОТАЕТ СО ВСЕМИ ТИПАМИ КНОПОК ==========
-async function loadTelegramProfile() {
+function loadTelegramProfile() {
     console.log('🔍 Загрузка профиля...');
     
     let userId = null;
@@ -737,58 +752,38 @@ async function loadTelegramProfile() {
     let userFirstName = null;
     let userPhotoUrl = null;
     
-    // ===== СПОСОБ 1: Telegram WebApp (главный способ) =====
-    if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            userId = tg.initDataUnsafe.user.id;
-            userName = tg.initDataUnsafe.user.username;
-            userFirstName = tg.initDataUnsafe.user.first_name;
-            userPhotoUrl = tg.initDataUnsafe.user.photo_url;
-            console.log('✅ Данные из Telegram WebApp:', { userId, userName });
-        }
+    // Данные из Telegram WebApp (уже получены)
+    if (tgUserData) {
+        userId = tgUserData.id;
+        userName = tgUserData.username;
+        userFirstName = tgUserData.first_name;
+        userPhotoUrl = tgUserData.photo_url;
+        console.log('✅ Из Telegram WebApp:', { userId, userName });
     }
     
-    // ===== СПОСОБ 2: Данные из URL (запасной) =====
+    // Данные из URL (запасной)
     if (!userId) {
         const urlParams = new URLSearchParams(window.location.search);
         userId = urlParams.get('user_id');
         let rawUsername = urlParams.get('username');
         let rawFirstName = urlParams.get('first_name');
-        
         if (rawUsername) userName = decodeURIComponent(rawUsername);
         if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
-        console.log('📱 Данные из URL:', { userId, userName });
+        console.log('📱 Из URL:', { userId, userName });
     }
     
-    // ===== ПОКАЗЫВАЕМ ПРОФИЛЬ =====
     if (userId) {
         let displayName = userFirstName || 'Пользователь';
-        
         document.getElementById('profileName').innerHTML = escapeHtml(displayName);
-        
         let cleanUsername = userName ? (userName.startsWith('@') ? userName : '@' + userName) : '@user';
         document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
-        
         tgUser = { id: userId, username: userName || 'user', first_name: displayName };
-        
-        const avatarContainer = document.getElementById('profileAvatar');
-        if (userPhotoUrl) {
-            avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
-        } else {
-            avatarContainer.innerHTML = '👤';
-        }
-        
+        document.getElementById('profileAvatar').innerHTML = '👤';
         sendToBot('app_opened', { user: tgUser });
-        console.log('✅ Профиль загружен!', userId, userName);
+        console.log('✅ Профиль загружен!');
         return;
     }
     
-    // ===== ГОСТЬ =====
-    console.log('❌ Нет данных пользователя');
     document.getElementById('profileName').innerHTML = 'Гость';
     document.getElementById('profileUsername').innerHTML = '@guest';
     document.getElementById('profileAvatar').innerHTML = '👤';
