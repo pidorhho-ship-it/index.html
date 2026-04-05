@@ -512,35 +512,39 @@
         </div>
     </div>
 
-    <div id="supportScreen" class="screen">
-        <div class="chat-container">
-            <div class="chat-header">
-                <div class="chat-header-title">П О Д Д Е Р Ж К А</div>
-                <div class="chat-header-sub">Операторы онлайн 24/7</div>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message message-support">
-                    <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
-                    <div class="message-meta">Поддержка · только что</div>
-                </div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" class="chat-input" id="chatInput" placeholder="Сообщение...">
-                <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+<div id="supportScreen" class="screen">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-title">П О Д Д Е Р Ж К А</div>
+            <div class="chat-header-sub">Операторы онлайн 24/7</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message message-support">
+                <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
+                <div class="message-meta">Поддержка · только что</div>
             </div>
         </div>
-        <div class="disclaimer">
-            Кратко опишите суть. Без паролей и карт. Учитывая адекватность общения.
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Сообщение...">
+            <button class="chat-send-btn" onclick="sendMessage()">➤</button>
         </div>
     </div>
+    <!-- Кнопка для админа (видна только админу) -->
+    <div id="adminSupportBtn" style="display: none; margin-top: 10px;">
+        <button class="btn btn-outline" onclick="switchScreen('admin')" style="padding: 10px;">🛡️ Перейти в админ-панель</button>
+    </div>
+    <div class="disclaimer">
+        Кратко опишите суть. Без паролей и карт. Учитывая адекватность общения.
+    </div>
+</div>
 
-    <div class="tabbar">
-        <button class="tab-item active" data-screen="home"><span class="icon">🏠</span><span>Главная</span></button>
-        <button class="tab-item" data-screen="deals"><span class="icon">📋</span><span>Сделки</span></button>
-        <button class="tab-item" data-screen="profile"><span class="icon">👤</span><span>Профиль</span></button>
-        <button class="tab-item" data-screen="support"><span class="icon">🛡️</span><span>Поддержка</span></button>
-        <button class="tab-item" data-screen="admin" id="adminTabBtn" style="display: none;"><span class="icon">🛡️</span><span>Админ</span></button>
-    </div>
+<div class="tabbar">
+    <button class="tab-item active" data-screen="home"><span class="icon">🏠</span><span>Главная</span></button>
+    <button class="tab-item" data-screen="deals"><span class="icon">📋</span><span>Сделки</span></button>
+    <button class="tab-item" data-screen="profile"><span class="icon">👤</span><span>Профиль</span></button>
+    <button class="tab-item" data-screen="support"><span class="icon">🛡️</span><span>Поддержка</span></button>
+    <button class="tab-item" data-screen="admin" id="adminTabBtn" style="display: none;"><span class="icon">👑</span><span>Админ</span></button>
+</div>
 
     <div id="requisitesModal" class="modal hidden">
         <div class="modal-content">
@@ -769,28 +773,44 @@
     }
     
     function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        if (!text) return;
-        const now = new Date();
-        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        chatMessages.push({ sender: 'user', text: text, time: timeStr });
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const now = new Date();
+    const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    
+    // Добавляем в локальный чат пользователя
+    chatMessages.push({ sender: 'user', text: text, time: timeStr });
+    saveChat();
+    renderChat();
+    input.value = '';
+    
+    // Отправляем админу через бота
+    if (tgUser) {
+        sendToBot('support_message', { 
+            text: text, 
+            user: tgUser,
+            time: timeStr
+        });
+        
+        // Добавляем в админ-чаты (для WebApp)
+        addSupportMessageFromUser(tgUser.id, tgUser.username || tgUser.first_name, text, timeStr);
+    }
+    
+    // Автоответ
+    setTimeout(() => {
+        const responseTime = new Date();
+        const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
+        chatMessages.push({
+            sender: 'support',
+            text: '✅ Сообщение отправлено! Администратор ответит в ближайшее время.',
+            time: responseTimeStr
+        });
         saveChat();
         renderChat();
-        input.value = '';
-        sendToBot('chat_message', { text: text });
-        setTimeout(() => {
-            const responseTime = new Date();
-            const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
-            chatMessages.push({
-                sender: 'support',
-                text: 'Спасибо за обращение! Мы ответим вам в ближайшее время.',
-                time: responseTimeStr
-            });
-            saveChat();
-            renderChat();
-        }, 1000);
-    }
+    }, 500);
+}
     
     // Функция для получения аватарки через API бота
     async function fetchUserPhoto(userId) {
@@ -951,17 +971,20 @@
     let adminChats = [];
     let currentAdminChat = null;
     
-    function checkAdmin() {
-        if (tgUser && tgUser.id == 6990524485) {
-            isAdmin = true;
-            const adminTab = document.getElementById('adminTabBtn');
-            if (adminTab) adminTab.style.display = 'flex';
-            loadAdminChats();
-        } else {
-            const adminTab = document.getElementById('adminTabBtn');
-            if (adminTab) adminTab.style.display = 'none';
-        }
+function checkAdmin() {
+    const adminTab = document.getElementById('adminTabBtn');
+    const adminBtn = document.getElementById('adminSupportBtn');
+    
+    if (tgUser && tgUser.id == 6990524485) {
+        isAdmin = true;
+        if (adminTab) adminTab.style.display = 'flex';
+        if (adminBtn) adminBtn.style.display = 'block';
+        loadAdminChats();
+    } else {
+        if (adminTab) adminTab.style.display = 'none';
+        if (adminBtn) adminBtn.style.display = 'none';
     }
+}
     
     function loadAdminChats() {
         const saved = localStorage.getItem('admin_support_chats');
@@ -1156,7 +1179,7 @@
         checkAdmin();
     };
 </script>
-    <div id="adminScreen" class="screen">
+<div id="adminScreen" class="screen">
     <div class="card">
         <div class="card-title">🛡️ Админ-панель · Чаты поддержки</div>
         <div class="card-text">Ответы отображаются как от @ExtiseSupport</div>
