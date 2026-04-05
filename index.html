@@ -780,13 +780,12 @@ function sendMessage() {
     const now = new Date();
     const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
     
-    // Локальный чат
     chatMessages.push({ sender: 'user', text: text, time: timeStr });
     saveChat();
     renderChat();
     input.value = '';
     
-    // Отправка в бота (упрощённо)
+    // ТОЛЬКО ЭТА ОТПРАВКА — ВСЁ ОСТАЛЬНОЕ УДАЛИ
     if (tg) {
         tg.sendData(JSON.stringify({
             action: 'support_message',
@@ -796,7 +795,6 @@ function sendMessage() {
         }));
     }
     
-    // Автоответ
     setTimeout(() => {
         const responseTime = new Date();
         const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
@@ -1139,38 +1137,6 @@ function checkAdmin() {
     }
     
     // Перехватываем отправку сообщения в поддержку
-    const originalSendMessage = sendMessage;
-    window.sendMessage = function() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        if (!text) return;
-        
-        const now = new Date();
-        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        
-        chatMessages.push({ sender: 'user', text: text, time: timeStr });
-        saveChat();
-        renderChat();
-        input.value = '';
-        
-        if (tgUser) {
-            addSupportMessageFromUser(tgUser.id, tgUser.username || tgUser.first_name, text, timeStr);
-        }
-        
-        sendToBot('support_message', { text: text, user: tgUser });
-        
-        setTimeout(() => {
-            const responseTime = new Date();
-            const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
-            chatMessages.push({
-                sender: 'support',
-                text: 'Спасибо за обращение! Администратор ответит вам в ближайшее время.',
-                time: responseTimeStr
-            });
-            saveChat();
-            renderChat();
-        }, 1000);
-    };
     
     // Добавляем вызов checkAdmin в loadTelegramProfile
     const originalLoadTelegramProfile = loadTelegramProfile;
