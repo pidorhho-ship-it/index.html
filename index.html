@@ -772,7 +772,7 @@
         container.scrollTop = container.scrollHeight;
     }
     
-    function sendMessage() {
+function sendMessage() {
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
     if (!text) return;
@@ -780,22 +780,20 @@
     const now = new Date();
     const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
     
-    // Добавляем в локальный чат пользователя
+    // Локальный чат
     chatMessages.push({ sender: 'user', text: text, time: timeStr });
     saveChat();
     renderChat();
     input.value = '';
     
-    // Отправляем админу через бота
-    if (tgUser) {
-        sendToBot('support_message', { 
-            text: text, 
-            user: tgUser,
+    // Отправка в бота (упрощённо)
+    if (tg) {
+        tg.sendData(JSON.stringify({
+            action: 'support_message',
+            text: text,
+            user: tgUserData,
             time: timeStr
-        });
-        
-        // Добавляем в админ-чаты (для WebApp)
-        addSupportMessageFromUser(tgUser.id, tgUser.username || tgUser.first_name, text, timeStr);
+        }));
     }
     
     // Автоответ
@@ -811,6 +809,8 @@
         renderChat();
     }, 500);
 }
+
+
     
     // Функция для получения аватарки через API бота
     async function fetchUserPhoto(userId) {
