@@ -544,312 +544,336 @@
 
 
     
-    <script>
+<script>
+    const BOT_TOKEN = "8784609786:AAHXSyJfRREAJLowsPQePDnzSX2vMc4F6Rs";
+    
+    // ПОДКЛЮЧАЕМ Telegram WebApp МГНОВЕННО
+    let tg = null;
+    let tgUserData = null;
+    
+    if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tgUserData = tg.initDataUnsafe?.user || null;
+        console.log('✅ Telegram WebApp:', tgUserData);
+    }
+    
+    let tgUser = null;
+    let balance = { available: 1250.50, frozen: 200.00 };
+    let deals = [];
+    let requisites = { crypto: '', card: '', phone: '' };
+    let dealIdCounter = 100;
+    let chatMessages = [];
 
-// ПОДКЛЮЧАЕМ Telegram WebApp МГНОВЕННО
-let tg = null;
-let tgUserData = null;
-
-if (window.Telegram && window.Telegram.WebApp) {
-    tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    tgUserData = tg.initDataUnsafe?.user || null;
-    console.log('✅ Telegram WebApp:', tgUserData);
-}
-        
-        const BOT_TOKEN = "8784609786:AAHXSyJfRREAJLowsPQePDnzSX2vMc4F6Rs";
-        
-        let tgUser = null;
-        let balance = { available: 1250.50, frozen: 200.00 };
-        let deals = [];
-        let requisites = { crypto: '', card: '', phone: '' };
-        let dealIdCounter = 100;
-        let chatMessages = [];
-
-        function loadData() {
-            const savedDeals = localStorage.getItem('market_trade_deals');
-            if (savedDeals) deals = JSON.parse(savedDeals);
-            const savedBalance = localStorage.getItem('market_trade_balance');
-            if (savedBalance) balance = JSON.parse(savedBalance);
-            const savedRequisites = localStorage.getItem('market_trade_requisites');
-            if (savedRequisites) requisites = JSON.parse(savedRequisites);
-            const savedChat = localStorage.getItem('market_trade_chat');
-            if (savedChat) {
-                chatMessages = JSON.parse(savedChat);
-                renderChat();
-            }
-            if (deals.length === 0) {
-                deals.push({
-                    id: 'MT-100',
-                    title: 'Аккаунт CS2 Prime',
-                    amount: 45,
-                    currency: 'USD',
-                    status: 'active',
-                    createdAt: new Date().toISOString(),
-                    sellerId: 'me'
-                });
-                deals.push({
-                    id: 'MT-099',
-                    title: '1000 золота WoW',
-                    amount: 25,
-                    currency: 'USD',
-                    status: 'completed',
-                    createdAt: new Date(Date.now() - 86400000).toISOString(),
-                    sellerId: 'me'
-                });
-                saveDeals();
-            }
-            updateAllUI();
+    function loadData() {
+        const savedDeals = localStorage.getItem('market_trade_deals');
+        if (savedDeals) deals = JSON.parse(savedDeals);
+        const savedBalance = localStorage.getItem('market_trade_balance');
+        if (savedBalance) balance = JSON.parse(savedBalance);
+        const savedRequisites = localStorage.getItem('market_trade_requisites');
+        if (savedRequisites) requisites = JSON.parse(savedRequisites);
+        const savedChat = localStorage.getItem('market_trade_chat');
+        if (savedChat) {
+            chatMessages = JSON.parse(savedChat);
+            renderChat();
         }
-        
-        function saveDeals() { localStorage.setItem('market_trade_deals', JSON.stringify(deals)); }
-        function saveBalance() { localStorage.setItem('market_trade_balance', JSON.stringify(balance)); }
-        function saveRequisitesData() { localStorage.setItem('market_trade_requisites', JSON.stringify(requisites)); }
-        function saveChat() { localStorage.setItem('market_trade_chat', JSON.stringify(chatMessages)); }
-        
-        function updateAllUI() {
-            document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
-            const completed = deals.filter(d => d.status === 'completed').length;
-            const activeTotal = deals.filter(d => d.status === 'active').reduce((sum, d) => sum + d.amount, 0);
-            document.getElementById('statsText').innerHTML = `✅ Завершено сделок: ${completed}<br>💰 В обороте: $${activeTotal.toFixed(2)}`;
-            document.getElementById('availableBalance').innerHTML = `$${balance.available.toFixed(2)}`;
-            document.getElementById('frozenBalance').innerHTML = `$${balance.frozen.toFixed(2)}`;
-            document.getElementById('totalBalance').innerHTML = `$${(balance.available + balance.frozen).toFixed(2)}`;
-            let reqText = '';
-            if (requisites.crypto) reqText += `💎 Крипто: ${requisites.crypto.substring(0, 12)}...\n`;
-            if (requisites.card) reqText += `💳 Карта: ****${requisites.card.slice(-4)}\n`;
-            if (requisites.phone) reqText += `📱 Телефон: ${requisites.phone}\n`;
-            if (!reqText) reqText = '❌ Не указаны';
-            document.getElementById('requisitesInfo').innerHTML = reqText.replace(/\n/g, '<br>');
-            renderDealsList();
-        }
-        
-        function renderDealsList() {
-            const container = document.getElementById('myDealsList');
-            const myDeals = deals.filter(d => d.sellerId === 'me');
-            if (myDeals.length === 0) {
-                container.innerHTML = `<div class="empty-state">📭 У вас пока нет сделок<br>Создайте первую!</div>`;
-                return;
-            }
-            let html = '';
-            for (let deal of myDeals) {
-                const statusText = { active: '🟡 Активна', completed: '✅ Завершена', pending: '⏳ Ожидает' }[deal.status] || deal.status;
-                const statusClass = { active: '', completed: 'completed', pending: 'pending' }[deal.status] || '';
-                const date = new Date(deal.createdAt).toLocaleDateString('ru-RU');
-                html += `
-                    <div class="deal-card">
-                        <div class="deal-header">
-                            <span class="deal-id">${deal.id}</span>
-                            <span class="deal-status ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="deal-title">${escapeHtml(deal.title)}</div>
-                        <div class="deal-amount">${deal.amount.toFixed(2)} ${deal.currency}</div>
-                        <div class="card-text" style="font-size: 11px; margin-top: 6px;">📅 ${date}</div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-        }
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function createDeal() {
-            const title = document.getElementById('dealTitle').value;
-            const amount = parseFloat(document.getElementById('dealAmount').value);
-            const currency = document.getElementById('dealCurrency').value;
-            if (!title || title.length < 3) {
-                alert('Введите название сделки (минимум 3 символа)');
-                return;
-            }
-            if (isNaN(amount) || amount <= 0) {
-                alert('Введите корректную сумму');
-                return;
-            }
-            dealIdCounter++;
-            const newDeal = {
-                id: `MT-${dealIdCounter}`,
-                title: title,
-                amount: amount,
-                currency: currency,
-                status: 'pending',
+        if (deals.length === 0) {
+            deals.push({
+                id: 'MT-100',
+                title: 'Аккаунт CS2 Prime',
+                amount: 45,
+                currency: 'USD',
+                status: 'active',
                 createdAt: new Date().toISOString(),
                 sellerId: 'me'
-            };
-            deals.unshift(newDeal);
+            });
+            deals.push({
+                id: 'MT-099',
+                title: '1000 золота WoW',
+                amount: 25,
+                currency: 'USD',
+                status: 'completed',
+                createdAt: new Date(Date.now() - 86400000).toISOString(),
+                sellerId: 'me'
+            });
             saveDeals();
-            document.getElementById('dealTitle').value = '';
-            document.getElementById('dealAmount').value = '';
-            updateAllUI();
-            const botUsername = tgUser?.username || 'MarketTradeBot';
-            const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
-            alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}`);
-            sendToBot('create_deal', { id: newDeal.id, title: title, amount: amount, currency: currency });
         }
-        
-        function renderChat() {
-            const container = document.getElementById('chatMessages');
-            if (!container) return;
-            if (chatMessages.length === 0) {
-                container.innerHTML = `<div class="message message-support">
-                    <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
-                    <div class="message-meta">Поддержка · только что</div>
-                </div>`;
-                return;
-            }
-            let html = '';
-            for (let msg of chatMessages) {
-                const isUser = msg.sender === 'user';
-                html += `
-                    <div class="message ${isUser ? 'message-user' : 'message-support'}">
-                        <div class="message-bubble">${escapeHtml(msg.text)}</div>
-                        <div class="message-meta">${isUser ? 'Вы' : 'Поддержка'} · ${msg.time}</div>
+        updateAllUI();
+    }
+    
+    function saveDeals() { localStorage.setItem('market_trade_deals', JSON.stringify(deals)); }
+    function saveBalance() { localStorage.setItem('market_trade_balance', JSON.stringify(balance)); }
+    function saveRequisitesData() { localStorage.setItem('market_trade_requisites', JSON.stringify(requisites)); }
+    function saveChat() { localStorage.setItem('market_trade_chat', JSON.stringify(chatMessages)); }
+    
+    function updateAllUI() {
+        document.getElementById('balanceBadge').innerHTML = `$${balance.available.toFixed(2)}`;
+        const completed = deals.filter(d => d.status === 'completed').length;
+        const activeTotal = deals.filter(d => d.status === 'active').reduce((sum, d) => sum + d.amount, 0);
+        document.getElementById('statsText').innerHTML = `✅ Завершено сделок: ${completed}<br>💰 В обороте: $${activeTotal.toFixed(2)}`;
+        document.getElementById('availableBalance').innerHTML = `$${balance.available.toFixed(2)}`;
+        document.getElementById('frozenBalance').innerHTML = `$${balance.frozen.toFixed(2)}`;
+        document.getElementById('totalBalance').innerHTML = `$${(balance.available + balance.frozen).toFixed(2)}`;
+        let reqText = '';
+        if (requisites.crypto) reqText += `💎 Крипто: ${requisites.crypto.substring(0, 12)}...\n`;
+        if (requisites.card) reqText += `💳 Карта: ****${requisites.card.slice(-4)}\n`;
+        if (requisites.phone) reqText += `📱 Телефон: ${requisites.phone}\n`;
+        if (!reqText) reqText = '❌ Не указаны';
+        document.getElementById('requisitesInfo').innerHTML = reqText.replace(/\n/g, '<br>');
+        renderDealsList();
+    }
+    
+    function renderDealsList() {
+        const container = document.getElementById('myDealsList');
+        const myDeals = deals.filter(d => d.sellerId === 'me');
+        if (myDeals.length === 0) {
+            container.innerHTML = `<div class="empty-state">📭 У вас пока нет сделок<br>Создайте первую!</div>`;
+            return;
+        }
+        let html = '';
+        for (let deal of myDeals) {
+            const statusText = { active: '🟡 Активна', completed: '✅ Завершена', pending: '⏳ Ожидает' }[deal.status] || deal.status;
+            const statusClass = { active: '', completed: 'completed', pending: 'pending' }[deal.status] || '';
+            const date = new Date(deal.createdAt).toLocaleDateString('ru-RU');
+            html += `
+                <div class="deal-card">
+                    <div class="deal-header">
+                        <span class="deal-id">${deal.id}</span>
+                        <span class="deal-status ${statusClass}">${statusText}</span>
                     </div>
-                `;
-            }
-            container.innerHTML = html;
-            container.scrollTop = container.scrollHeight;
+                    <div class="deal-title">${escapeHtml(deal.title)}</div>
+                    <div class="deal-amount">${deal.amount.toFixed(2)} ${deal.currency}</div>
+                    <div class="card-text" style="font-size: 11px; margin-top: 6px;">📅 ${date}</div>
+                </div>
+            `;
         }
-        
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            if (!text) return;
-            const now = new Date();
-            const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-            chatMessages.push({ sender: 'user', text: text, time: timeStr });
+        container.innerHTML = html;
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    function createDeal() {
+        const title = document.getElementById('dealTitle').value;
+        const amount = parseFloat(document.getElementById('dealAmount').value);
+        const currency = document.getElementById('dealCurrency').value;
+        if (!title || title.length < 3) {
+            alert('Введите название сделки (минимум 3 символа)');
+            return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+            alert('Введите корректную сумму');
+            return;
+        }
+        dealIdCounter++;
+        const newDeal = {
+            id: `MT-${dealIdCounter}`,
+            title: title,
+            amount: amount,
+            currency: currency,
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+            sellerId: 'me'
+        };
+        deals.unshift(newDeal);
+        saveDeals();
+        document.getElementById('dealTitle').value = '';
+        document.getElementById('dealAmount').value = '';
+        updateAllUI();
+        const botUsername = tgUser?.username || 'MarketTradeBot';
+        const dealLink = `https://t.me/${botUsername}?start=${newDeal.id}`;
+        alert(`✅ Сделка создана!\n\nСсылка для покупателя:\n${dealLink}`);
+        sendToBot('create_deal', { id: newDeal.id, title: title, amount: amount, currency: currency });
+    }
+    
+    function renderChat() {
+        const container = document.getElementById('chatMessages');
+        if (!container) return;
+        if (chatMessages.length === 0) {
+            container.innerHTML = `<div class="message message-support">
+                <div class="message-bubble">👋 Здравствуйте! Чем могу помочь?</div>
+                <div class="message-meta">Поддержка · только что</div>
+            </div>`;
+            return;
+        }
+        let html = '';
+        for (let msg of chatMessages) {
+            const isUser = msg.sender === 'user';
+            html += `
+                <div class="message ${isUser ? 'message-user' : 'message-support'}">
+                    <div class="message-bubble">${escapeHtml(msg.text)}</div>
+                    <div class="message-meta">${isUser ? 'Вы' : 'Поддержка'} · ${msg.time}</div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        chatMessages.push({ sender: 'user', text: text, time: timeStr });
+        saveChat();
+        renderChat();
+        input.value = '';
+        sendToBot('chat_message', { text: text });
+        setTimeout(() => {
+            const responseTime = new Date();
+            const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
+            chatMessages.push({
+                sender: 'support',
+                text: 'Спасибо за обращение! Мы ответим вам в ближайшее время.',
+                time: responseTimeStr
+            });
             saveChat();
             renderChat();
-            input.value = '';
-            sendToBot('chat_message', { text: text });
-            setTimeout(() => {
-                const responseTime = new Date();
-                const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
-                chatMessages.push({
-                    sender: 'support',
-                    text: 'Спасибо за обращение! Мы ответим вам в ближайшее время.',
-                    time: responseTimeStr
-                });
-                saveChat();
-                renderChat();
-            }, 1000);
-        }
-        
-        
-        // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
-        // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
-// ========== ГЛАВНАЯ ФУНКЦИЯ - РАБОТАЕТ СО ВСЕМИ ТИПАМИ КНОПОК ==========
-function loadTelegramProfile() {
-    console.log('🔍 Загрузка профиля...');
-    
-    let userId = null;
-    let userName = null;
-    let userFirstName = null;
-    let userPhotoUrl = null;
-    
-    // Данные из Telegram WebApp (уже получены)
-    if (tgUserData) {
-        userId = tgUserData.id;
-        userName = tgUserData.username;
-        userFirstName = tgUserData.first_name;
-        userPhotoUrl = tgUserData.photo_url;
-        console.log('✅ Из Telegram WebApp:', { userId, userName });
+        }, 1000);
     }
     
-    // Данные из URL (запасной)
-    if (!userId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        userId = urlParams.get('user_id');
-        let rawUsername = urlParams.get('username');
-        let rawFirstName = urlParams.get('first_name');
-        if (rawUsername) userName = decodeURIComponent(rawUsername);
-        if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
-        console.log('📱 Из URL:', { userId, userName });
-    }
-    
-    if (userId) {
-        let displayName = userFirstName || 'Пользователь';
-        document.getElementById('profileName').innerHTML = escapeHtml(displayName);
-        let cleanUsername = userName ? (userName.startsWith('@') ? userName : '@' + userName) : '@user';
-        document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
-        tgUser = { id: userId, username: userName || 'user', first_name: displayName };
-        document.getElementById('profileAvatar').innerHTML = '👤';
-        sendToBot('app_opened', { user: tgUser });
-        console.log('✅ Профиль загружен!');
-        return;
-    }
-    
-    document.getElementById('profileName').innerHTML = 'Гость';
-    document.getElementById('profileUsername').innerHTML = '@guest';
-    document.getElementById('profileAvatar').innerHTML = '👤';
-}
-        
-        function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
-        function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
-        
-        function copyDepositAddress() {
-            const address = document.getElementById('depositAddress').innerText;
-            navigator.clipboard.writeText(address);
-            alert('✅ Адрес скопирован!');
-        }
-        
-        function showWithdraw() { alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @MarketTradeSupport`); }
-        
-        function showRequisitesModal() {
-            document.getElementById('modalCrypto').value = requisites.crypto || '';
-            document.getElementById('modalCard').value = requisites.card || '';
-            document.getElementById('modalPhone').value = requisites.phone || '';
-            document.getElementById('requisitesModal').classList.remove('hidden');
-        }
-        
-        function closeModal() { document.getElementById('requisitesModal').classList.add('hidden'); }
-        
-        function saveRequisites() {
-            requisites.crypto = document.getElementById('modalCrypto').value;
-            requisites.card = document.getElementById('modalCard').value;
-            requisites.phone = document.getElementById('modalPhone').value;
-            saveRequisitesData();
-            updateAllUI();
-            closeModal();
-            alert('✅ Реквизиты сохранены!');
-            sendToBot('update_requisites', { crypto: requisites.crypto, card: requisites.card, phone: requisites.phone });
-        }
-        
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-            document.getElementById(screenId + 'Screen').classList.add('active');
-            document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.tab-item[data-screen="${screenId}"]`).classList.add('active');
-        }
-        
-        document.querySelectorAll('.tab-item').forEach(btn => {
-            btn.addEventListener('click', () => switchScreen(btn.getAttribute('data-screen')));
-        });
-        
-        // ========== ФУНКЦИЯ ОТПРАВКИ ДАННЫХ В БОТА ==========
-        function sendToBot(action, data) {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                const sendData = JSON.stringify({
-                    action: action,
-                    data: data,
-                    user: tg.initDataUnsafe?.user,
-                    timestamp: new Date().toISOString()
-                });
-                console.log('Sending to bot:', sendData);
-                tg.sendData(sendData);
-            } else {
-                console.log('Telegram WebApp not available, data not sent:', { action, data });
+    // Функция для получения аватарки через API бота
+    async function fetchUserPhoto(userId) {
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${userId}&limit=1`);
+            const data = await response.json();
+            if (data.ok && data.result && data.result.photos && data.result.photos.length > 0) {
+                const fileId = data.result.photos[0][0].file_id;
+                const fileUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`;
+                const fileRes = await fetch(fileUrl);
+                const fileData = await fileRes.json();
+                if (fileData.ok && fileData.result.file_path) {
+                    return `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
+                }
             }
+            return null;
+        } catch (error) {
+            console.error('Error fetching photo:', error);
+            return null;
+        }
+    }
+    
+    function loadTelegramProfile() {
+        console.log('🔍 Загрузка профиля...');
+        
+        let userId = null;
+        let userName = null;
+        let userFirstName = null;
+        
+        // Данные из Telegram WebApp
+        if (tgUserData) {
+            userId = tgUserData.id;
+            userName = tgUserData.username;
+            userFirstName = tgUserData.first_name;
+            console.log('✅ Из Telegram WebApp:', { userId, userName });
         }
         
+        // Данные из URL (запасной вариант)
+        if (!userId) {
+            const urlParams = new URLSearchParams(window.location.search);
+            userId = urlParams.get('user_id');
+            let rawUsername = urlParams.get('username');
+            let rawFirstName = urlParams.get('first_name');
+            if (rawUsername) userName = decodeURIComponent(rawUsername);
+            if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
+            console.log('📱 Из URL:', { userId, userName });
+        }
+        
+        if (userId) {
+            let displayName = userFirstName || 'Пользователь';
+            document.getElementById('profileName').innerHTML = escapeHtml(displayName);
+            let cleanUsername = userName ? (userName.startsWith('@') ? userName : '@' + userName) : '@user';
+            document.getElementById('profileUsername').innerHTML = escapeHtml(cleanUsername);
+            tgUser = { id: userId, username: userName || 'user', first_name: displayName };
+            
+            // Загружаем аватарку через API (если получится)
+            const avatarContainer = document.getElementById('profileAvatar');
+            avatarContainer.innerHTML = '👤'; // Показываем иконку сразу
+            fetchUserPhoto(userId).then(photoUrl => {
+                if (photoUrl) {
+                    avatarContainer.innerHTML = `<img src="${photoUrl}" alt="avatar">`;
+                }
+            }).catch(() => {});
+            
+            sendToBot('app_opened', { user: tgUser });
+            console.log('✅ Профиль загружен!');
+            return;
+        }
+        
+        document.getElementById('profileName').innerHTML = 'Гость';
+        document.getElementById('profileUsername').innerHTML = '@guest';
+        document.getElementById('profileAvatar').innerHTML = '👤';
+    }
+    
+    function showDeposit() { document.getElementById('depositModal').classList.remove('hidden'); }
+    function closeDepositModal() { document.getElementById('depositModal').classList.add('hidden'); }
+    
+    function copyDepositAddress() {
+        const address = document.getElementById('depositAddress').innerText;
+        navigator.clipboard.writeText(address);
+        alert('✅ Адрес скопирован!');
+    }
+    
+    function showWithdraw() { alert(`💸 Вывод средств\n\nДоступно: $${balance.available.toFixed(2)}\n\nДля вывода обратитесь в поддержку @MarketTradeSupport`); }
+    
+    function showRequisitesModal() {
+        document.getElementById('modalCrypto').value = requisites.crypto || '';
+        document.getElementById('modalCard').value = requisites.card || '';
+        document.getElementById('modalPhone').value = requisites.phone || '';
+        document.getElementById('requisitesModal').classList.remove('hidden');
+    }
+    
+    function closeModal() { document.getElementById('requisitesModal').classList.add('hidden'); }
+    
+    function saveRequisites() {
+        requisites.crypto = document.getElementById('modalCrypto').value;
+        requisites.card = document.getElementById('modalCard').value;
+        requisites.phone = document.getElementById('modalPhone').value;
+        saveRequisitesData();
+        updateAllUI();
+        closeModal();
+        alert('✅ Реквизиты сохранены!');
+        sendToBot('update_requisites', { crypto: requisites.crypto, card: requisites.card, phone: requisites.phone });
+    }
+    
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+        document.getElementById(screenId + 'Screen').classList.add('active');
+        document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.tab-item[data-screen="${screenId}"]`).classList.add('active');
+    }
+    
+    document.querySelectorAll('.tab-item').forEach(btn => {
+        btn.addEventListener('click', () => switchScreen(btn.getAttribute('data-screen')));
+    });
+    
+    function sendToBot(action, data) {
+        if (tg) {
+            const sendData = JSON.stringify({
+                action: action,
+                data: data,
+                user: tgUserData,
+                timestamp: new Date().toISOString()
+            });
+            console.log('Sending to bot:', sendData);
+            tg.sendData(sendData);
+        } else {
+            console.log('Telegram WebApp not available, data not sent:', { action, data });
+        }
+    }
+    
+    // Запускаем всё после загрузки страницы
+    window.addEventListener('DOMContentLoaded', function() {
         loadTelegramProfile();
         loadData();
-    </script>
+    });
+</script>
 </body>
 </html>
