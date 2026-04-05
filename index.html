@@ -391,6 +391,37 @@
             margin-top: 10px;
             cursor: pointer;
         }
+                .chats-list {
+            background: #1D1E33;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .chat-item {
+            padding: 14px;
+            border-bottom: 1px solid #3E5F8A;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-item:hover {
+            background: rgba(62, 95, 138, 0.2);
+        }
+        .chat-item-unread {
+            background: rgba(62, 95, 138, 0.15);
+        }
+        .chat-item-name {
+            font-weight: 600;
+            color: white;
+        }
+        .chat-item-preview {
+            font-size: 12px;
+            color: #8DA9D4;
+            margin-top: 4px;
+        }
+        .chat-item-time {
+            font-size: 10px;
+            color: #3E5F8A;
+            float: right;
+        }
     </style>
 </head>
 <body>
@@ -508,6 +539,7 @@
         <button class="tab-item" data-screen="deals"><span class="icon">📋</span><span>Сделки</span></button>
         <button class="tab-item" data-screen="profile"><span class="icon">👤</span><span>Профиль</span></button>
         <button class="tab-item" data-screen="support"><span class="icon">🛡️</span><span>Поддержка</span></button>
+        <button class="tab-item" data-screen="admin" id="adminTabBtn" style="display: none;"><span class="icon">🛡️</span><span>Админ</span></button>
     </div>
 
     <div id="requisitesModal" class="modal hidden">
@@ -914,6 +946,235 @@
             }));
         }
     });
+        // ========== АДМИН-ПАНЕЛЬ ПОДДЕРЖКИ ==========
+    let isAdmin = false;
+    let adminChats = [];
+    let currentAdminChat = null;
+    
+    function checkAdmin() {
+        if (tgUser && tgUser.id == 6990524485) {
+            isAdmin = true;
+            const adminTab = document.getElementById('adminTabBtn');
+            if (adminTab) adminTab.style.display = 'flex';
+            loadAdminChats();
+        } else {
+            const adminTab = document.getElementById('adminTabBtn');
+            if (adminTab) adminTab.style.display = 'none';
+        }
+    }
+    
+    function loadAdminChats() {
+        const saved = localStorage.getItem('admin_support_chats');
+        if (saved) {
+            adminChats = JSON.parse(saved);
+        } else {
+            adminChats = [];
+        }
+        renderAdminChatsList();
+    }
+    
+    function saveAdminChats() {
+        localStorage.setItem('admin_support_chats', JSON.stringify(adminChats));
+    }
+    
+    function addSupportMessageFromUser(userId, userName, message, time) {
+        let chat = adminChats.find(c => c.userId == userId);
+        if (!chat) {
+            chat = {
+                userId: userId,
+                userName: userName,
+                messages: [],
+                unread: 0
+            };
+            adminChats.unshift(chat);
+        }
+        chat.messages.push({
+            sender: 'user',
+            text: message,
+            time: time
+        });
+        chat.unread = (chat.unread || 0) + 1;
+        chat.lastMessage = message;
+        chat.lastTime = time;
+        saveAdminChats();
+        renderAdminChatsList();
+        
+        if (currentAdminChat == userId) {
+            markChatRead(userId);
+        }
+    }
+    
+    function markChatRead(userId) {
+        let chat = adminChats.find(c => c.userId == userId);
+        if (chat) {
+            chat.unread = 0;
+            saveAdminChats();
+            renderAdminChatsList();
+        }
+    }
+    
+    function renderAdminChatsList() {
+        const container = document.getElementById('adminChatsList');
+        if (!container) return;
+        
+        if (adminChats.length === 0) {
+            container.innerHTML = '<div class="empty-state">📭 Нет обращений в поддержку</div>';
+            return;
+        }
+        
+        let html = '';
+        for (let chat of adminChats) {
+            const unreadClass = chat.unread > 0 ? 'chat-item-unread' : '';
+            const preview = chat.lastMessage ? chat.lastMessage.substring(0, 40) : 'Нет сообщений';
+            html += `
+                <div class="chat-item ${unreadClass}" onclick="openAdminChat(${chat.userId})">
+                    <span class="chat-item-time">${chat.lastTime || ''}</span>
+                    <div class="chat-item-name">${escapeHtml(chat.userName)}</div>
+                    <div class="chat-item-preview">${escapeHtml(preview)}</div>
+                    ${chat.unread > 0 ? `<span style="background:#3E5F8A; padding:2px 8px; border-radius:20px; font-size:10px; margin-left:8px;">${chat.unread}</span>` : ''}
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+    
+    function openAdminChat(userId) {
+        currentAdminChat = userId;
+        markChatRead(userId);
+        renderAdminChatMessages();
+        document.getElementById('adminChatsList').style.display = 'none';
+        document.getElementById('adminChatView').style.display = 'block';
+    }
+    
+    function renderAdminChatMessages() {
+        const chat = adminChats.find(c => c.userId == currentAdminChat);
+        if (!chat) return;
+        
+        document.getElementById('adminChatWith').innerHTML = `Чат с ${escapeHtml(chat.userName)}`;
+        
+        const container = document.getElementById('adminChatMessages');
+        if (!container) return;
+        
+        let html = '';
+        for (let msg of chat.messages) {
+            const isUser = msg.sender === 'user';
+            html += `
+                <div class="message ${isUser ? 'message-user' : 'message-support'}">
+                    <div class="message-bubble">${escapeHtml(msg.text)}</div>
+                    <div class="message-meta">${isUser ? chat.userName : 'Поддержка (@ExtiseSupport)'} · ${msg.time}</div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    function sendAdminReply() {
+        const input = document.getElementById('adminChatInput');
+        const text = input.value.trim();
+        if (!text || !currentAdminChat) return;
+        
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        
+        let chat = adminChats.find(c => c.userId == currentAdminChat);
+        if (chat) {
+            chat.messages.push({
+                sender: 'admin',
+                text: text,
+                time: timeStr
+            });
+            chat.lastMessage = text;
+            chat.lastTime = timeStr;
+            saveAdminChats();
+            renderAdminChatsList();
+            renderAdminChatMessages();
+            
+            // Добавляем в чат пользователя
+            if (!window.chatMessages) window.chatMessages = [];
+            window.chatMessages.push({
+                sender: 'support',
+                text: text,
+                time: timeStr
+            });
+            saveChat();
+            
+            if (document.getElementById('supportScreen').classList.contains('active')) {
+                renderChat();
+            }
+        }
+        
+        input.value = '';
+        sendToBot('admin_reply', { user_id: currentAdminChat, message: text });
+    }
+    
+    function closeAdminChat() {
+        currentAdminChat = null;
+        document.getElementById('adminChatsList').style.display = 'block';
+        document.getElementById('adminChatView').style.display = 'none';
+        renderAdminChatsList();
+    }
+    
+    // Перехватываем отправку сообщения в поддержку
+    const originalSendMessage = sendMessage;
+    window.sendMessage = function() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        
+        const now = new Date();
+        const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        
+        chatMessages.push({ sender: 'user', text: text, time: timeStr });
+        saveChat();
+        renderChat();
+        input.value = '';
+        
+        if (tgUser) {
+            addSupportMessageFromUser(tgUser.id, tgUser.username || tgUser.first_name, text, timeStr);
+        }
+        
+        sendToBot('support_message', { text: text, user: tgUser });
+        
+        setTimeout(() => {
+            const responseTime = new Date();
+            const responseTimeStr = `${responseTime.getFullYear()}-${String(responseTime.getMonth()+1).padStart(2,'0')}-${String(responseTime.getDate()).padStart(2,'0')} ${String(responseTime.getHours()).padStart(2,'0')}:${String(responseTime.getMinutes()).padStart(2,'0')}:${String(responseTime.getSeconds()).padStart(2,'0')}`;
+            chatMessages.push({
+                sender: 'support',
+                text: 'Спасибо за обращение! Администратор ответит вам в ближайшее время.',
+                time: responseTimeStr
+            });
+            saveChat();
+            renderChat();
+        }, 1000);
+    };
+    
+    // Добавляем вызов checkAdmin в loadTelegramProfile
+    const originalLoadTelegramProfile = loadTelegramProfile;
+    loadTelegramProfile = function() {
+        originalLoadTelegramProfile();
+        checkAdmin();
+    };
 </script>
+    <div id="adminScreen" class="screen">
+    <div class="card">
+        <div class="card-title">🛡️ Админ-панель · Чаты поддержки</div>
+        <div class="card-text">Ответы отображаются как от @ExtiseSupport</div>
+    </div>
+    <div id="adminChatsList" class="chats-list"></div>
+    <div id="adminChatView" style="display: none;">
+        <div class="chat-container" style="height: 450px;">
+            <div class="chat-header">
+                <div class="chat-header-title" id="adminChatWith">Чат с пользователем</div>
+                <button class="btn btn-outline" style="padding: 8px; margin-top: 8px;" onclick="closeAdminChat()">← Назад к чатам</button>
+            </div>
+            <div class="chat-messages" id="adminChatMessages" style="max-height: 300px;"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="adminChatInput" placeholder="Ответ пользователю...">
+                <button class="chat-send-btn" onclick="sendAdminReply()">➤</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
