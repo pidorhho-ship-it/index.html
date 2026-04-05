@@ -725,27 +725,6 @@
             }, 1000);
         }
         
-        async function fetchUserPhoto(userId) {
-            if (!BOT_TOKEN) return null;
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUserProfilePhotos?user_id=${userId}&limit=1`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data.ok && data.result && data.result.photos && data.result.photos.length > 0) {
-                    const fileId = data.result.photos[0][0].file_id;
-                    const fileUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`;
-                    const fileRes = await fetch(fileUrl);
-                    const fileData = await fileRes.json();
-                    if (fileData.ok && fileData.result.file_path) {
-                        return `https://api.telegram.org/file/bot${BOT_TOKEN}/${fileData.result.file_path}`;
-                    }
-                }
-                return null;
-            } catch (error) {
-                console.error('Error fetching user photo:', error);
-                return null;
-            }
-        }
         
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
         // ========== ГЛАВНАЯ ФУНКЦИЯ - 100% РАБОТАЕТ ==========
@@ -756,20 +735,10 @@ async function loadTelegramProfile() {
     let userId = null;
     let userName = null;
     let userFirstName = null;
-    let userLastName = null;
     let userPhotoUrl = null;
     
-    // ===== СПОСОБ 1: Данные из URL (приоритетный для кнопки /start) =====
-    const urlParams = new URLSearchParams(window.location.search);
-    userId = urlParams.get('user_id');
-    let rawUsername = urlParams.get('username');
-    let rawFirstName = urlParams.get('first_name');
-    
-    if (rawUsername) userName = decodeURIComponent(rawUsername);
-    if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
-    
-    // ===== СПОСОБ 2: Данные из Telegram WebApp (если нет в URL) =====
-    if (!userId && window.Telegram && window.Telegram.WebApp) {
+    // ===== СПОСОБ 1: Telegram WebApp (главный способ) =====
+    if (window.Telegram && window.Telegram.WebApp) {
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -778,16 +747,26 @@ async function loadTelegramProfile() {
             userId = tg.initDataUnsafe.user.id;
             userName = tg.initDataUnsafe.user.username;
             userFirstName = tg.initDataUnsafe.user.first_name;
-            userLastName = tg.initDataUnsafe.user.last_name;
             userPhotoUrl = tg.initDataUnsafe.user.photo_url;
-            console.log('✅ Данные из Telegram WebApp');
+            console.log('✅ Данные из Telegram WebApp:', { userId, userName });
         }
+    }
+    
+    // ===== СПОСОБ 2: Данные из URL (запасной) =====
+    if (!userId) {
+        const urlParams = new URLSearchParams(window.location.search);
+        userId = urlParams.get('user_id');
+        let rawUsername = urlParams.get('username');
+        let rawFirstName = urlParams.get('first_name');
+        
+        if (rawUsername) userName = decodeURIComponent(rawUsername);
+        if (rawFirstName) userFirstName = decodeURIComponent(rawFirstName);
+        console.log('📱 Данные из URL:', { userId, userName });
     }
     
     // ===== ПОКАЗЫВАЕМ ПРОФИЛЬ =====
     if (userId) {
         let displayName = userFirstName || 'Пользователь';
-        if (userLastName) displayName += ' ' + userLastName;
         
         document.getElementById('profileName').innerHTML = escapeHtml(displayName);
         
@@ -800,8 +779,7 @@ async function loadTelegramProfile() {
         if (userPhotoUrl) {
             avatarContainer.innerHTML = `<img src="${userPhotoUrl}" alt="avatar">`;
         } else {
-            const avatarUrl = await fetchUserPhoto(userId);
-            avatarContainer.innerHTML = avatarUrl ? `<img src="${avatarUrl}" alt="avatar">` : '👤';
+            avatarContainer.innerHTML = '👤';
         }
         
         sendToBot('app_opened', { user: tgUser });
