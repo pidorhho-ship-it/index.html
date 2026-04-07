@@ -639,6 +639,7 @@ initTelegramWebApp();
 // ========== НОВЫЕ ФУНКЦИИ ДЛЯ СДЕЛОК ==========
 
 // Создание сделки с приглашением
+// Создание сделки с приглашением
 function createDealWithInvite() {
     // Проверка подключения
     if (!tg) {
@@ -669,9 +670,9 @@ function createDealWithInvite() {
         alert('❌ Введите корректную сумму');
         return;
     }
-    
-    // Отправляем данные боту
-    const sendData = JSON.stringify({
+
+    // Формируем данные для отправки
+    const sendData = {
         action: 'create_deal_with_invite',
         data: {
             title: title,
@@ -681,10 +682,13 @@ function createDealWithInvite() {
             seller_id: tgUserData?.id || null,
             seller_name: tgUserData?.first_name || 'Продавец'
         }
-    });
+    };
     
-    console.log('Sending invite:', sendData);
-    tg.sendData(sendData);
+    console.log('📤 Отправка в бота:', JSON.stringify(sendData));
+    
+    // Отправляем данные в бота
+    tg.sendData(JSON.stringify(sendData));
+    console.log('✅ Данные отправлены!');
     
     // Очищаем поля
     document.getElementById('dealBuyerUsername').value = '';
