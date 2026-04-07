@@ -450,30 +450,34 @@
         <button class="test-btn" onclick="sendToBot('test', { message: 'Привет от WebApp!' })">📤 Тест: Отправить данные в бота</button>
     </div>
 
-    <div id="dealsScreen" class="screen">
-        <div class="card">
-            <div class="card-title">➕ Новая сделка</div>
-            <div class="input-group">
-                <label class="input-label">Что продаёшь?</label>
-                <input type="text" id="dealTitle" class="input-field" placeholder="Аккаунт CS2, валюта, скин...">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Сумма</label>
-                <input type="number" id="dealAmount" class="input-field" placeholder="0">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Валюта</label>
-                <select id="dealCurrency" class="input-select">
-                    <option value="USD">🇺🇸 USD</option>
-                    <option value="RUB">🇷🇺 RUB</option>
-                    <option value="USDT">💎 USDT</option>
-                    <option value="TON">💎 TON</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="createDeal()">🚀 Создать сделку</button>
+<div id="dealsScreen" class="screen">
+    <div class="card">
+        <div class="card-title">➕ Новая сделка</div>
+        <div class="input-group">
+            <label class="input-label">👤 Юзернейм покупателя</label>
+            <input type="text" id="dealBuyerUsername" class="input-field" placeholder="@username или просто username">
         </div>
-        <div id="myDealsList"></div>
+        <div class="input-group">
+            <label class="input-label">📦 Что продаёшь?</label>
+            <input type="text" id="dealTitle" class="input-field" placeholder="Аккаунт CS2, валюта, скин...">
+        </div>
+        <div class="input-group">
+            <label class="input-label">💰 Сумма</label>
+            <input type="number" id="dealAmount" class="input-field" placeholder="0">
+        </div>
+        <div class="input-group">
+            <label class="input-label">💱 Валюта</label>
+            <select id="dealCurrency" class="input-select">
+                <option value="USD">🇺🇸 USD</option>
+                <option value="RUB">🇷🇺 RUB</option>
+                <option value="USDT">💎 USDT</option>
+                <option value="TON">💎 TON</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="createDealWithInvite()">🚀 Создать и пригласить</button>
     </div>
+    <div id="myDealsList"></div>
+</div>
 
     <div id="profileScreen" class="screen">
         <div class="card">
@@ -611,6 +615,73 @@
         }
     }
 
+// ========== НОВЫЕ ФУНКЦИИ ДЛЯ СДЕЛОК ==========
+
+// Создание сделки с приглашением
+function createDealWithInvite() {
+    const buyerUsername = document.getElementById('dealBuyerUsername').value.trim();
+    const title = document.getElementById('dealTitle').value.trim();
+    const amount = parseFloat(document.getElementById('dealAmount').value);
+    const currency = document.getElementById('dealCurrency').value;
+    
+    if (!buyerUsername) {
+        alert('❌ Введите юзернейм покупателя!');
+        return;
+    }
+    
+    if (!title || title.length < 3) {
+        alert('❌ Введите название сделки (минимум 3 символа)');
+        return;
+    }
+    
+    if (isNaN(amount) || amount <= 0) {
+        alert('❌ Введите корректную сумму');
+        return;
+    }
+    
+    if (tg) {
+        const sendData = JSON.stringify({
+            action: 'create_deal_with_invite',
+            data: {
+                title: title,
+                amount: amount,
+                currency: currency,
+                buyer_username: buyerUsername,
+                seller_id: tgUserData?.id || null,
+                seller_name: tgUserData?.first_name || 'Продавец'
+            }
+        });
+        
+        console.log('Sending invite:', sendData);
+        tg.sendData(sendData);
+        
+        // Очищаем поля
+        document.getElementById('dealBuyerUsername').value = '';
+        document.getElementById('dealTitle').value = '';
+        document.getElementById('dealAmount').value = '';
+        
+        alert(`✅ Приглашение отправлено пользователю @${buyerUsername.replace('@', '')}!\n\nОн получит уведомление от бота с кнопками ПРИНЯТЬ/ОТКЛОНИТЬ`);
+    } else {
+        alert('❌ Ошибка: не удалось связаться с ботом');
+    }
+}
+
+// Получение ID сделки из URL
+function getDealIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('deal_id');
+}
+
+// Загрузка сделки при открытии
+const dealIdFromUrl = getDealIdFromUrl();
+if (dealIdFromUrl && tg) {
+    tg.sendData(JSON.stringify({
+        action: 'get_deal',
+        deal_id: dealIdFromUrl,
+        user_id: tgUserData?.id
+    }));
+}
+    
     // Загружаем из localStorage если нет данных из WebApp
     function loadUserFromLocalStorage() {
         const userId = localStorage.getItem('tg_user_id');
