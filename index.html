@@ -586,6 +586,27 @@
     
 <script>
     const BOT_TOKEN = "8784609786:AAHXSyJfRREAJLowsPQePDnzSX2vMc4F6Rs";
+
+// Проверка подключения к боту
+function checkBotConnection() {
+    if (!tg) {
+        alert('❌ Ошибка: WebApp не инициализирован! Откройте через Telegram');
+        return false;
+    }
+    if (!tg.initDataUnsafe?.user) {
+        alert('❌ Ошибка: Нет данных пользователя! Откройте через кнопку бота');
+        return false;
+    }
+    console.log('✅ Подключено к боту! Пользователь:', tg.initDataUnsafe.user);
+    return true;
+}
+
+// В функции createDealWithInvite добавь проверку:
+function createDealWithInvite() {
+    if (!checkBotConnection()) return;
+    
+    // остальной код...
+}
     
     // ПОДКЛЮЧАЕМ Telegram WebApp МГНОВЕННО
     let tg = null;
