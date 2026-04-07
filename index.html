@@ -590,23 +590,34 @@
 // Проверка подключения к боту
 
 // В функции createDealWithInvite добавь проверку:
-function createDealWithInvite() {
-    if (!checkBotConnection()) return;
-    
-    // остальной код...
+
+// ========== ПРАВИЛЬНАЯ ИНИЦИАЛИЗАЦИЯ ==========
+let tg = null;
+let tgUserData = null;
+
+// Функция ожидания загрузки Telegram
+async function initTelegramWebApp() {
+    // Ждем появления объекта (до 2 секунд)
+    for (let i = 0; i < 20; i++) {
+        if (window.Telegram && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            tgUserData = tg.initDataUnsafe?.user || null;
+            console.log('✅ Telegram WebApp загружен:', tgUserData);
+            return true;
+        }
+        await new Promise(r => setTimeout(r, 100));
+    }
+    console.log('❌ Telegram WebApp не загружен');
+    return false;
 }
+
+// Запускаем инициализацию
+initTelegramWebApp();
     
     // ПОДКЛЮЧАЕМ Telegram WebApp МГНОВЕННО
-    let tg = null;
-    let tgUserData = null;
     
-    if (window.Telegram && window.Telegram.WebApp) {
-        tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        tgUserData = tg.initDataUnsafe?.user || null;
-        console.log('✅ Telegram WebApp:', tgUserData);
-    }
     
     let tgUser = null;
     let balance = { available: 1250.50, frozen: 200.00 };
