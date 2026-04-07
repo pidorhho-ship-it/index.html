@@ -588,18 +588,6 @@
     const BOT_TOKEN = "8784609786:AAHXSyJfRREAJLowsPQePDnzSX2vMc4F6Rs";
 
 // Проверка подключения к боту
-function checkBotConnection() {
-    if (!tg) {
-        alert('❌ Ошибка: WebApp не инициализирован! Откройте через Telegram');
-        return false;
-    }
-    if (!tg.initDataUnsafe?.user) {
-        alert('❌ Ошибка: Нет данных пользователя! Откройте через кнопку бота');
-        return false;
-    }
-    console.log('✅ Подключено к боту! Пользователь:', tg.initDataUnsafe.user);
-    return true;
-}
 
 // В функции createDealWithInvite добавь проверку:
 function createDealWithInvite() {
@@ -640,53 +628,59 @@ function createDealWithInvite() {
 
 // Создание сделки с приглашением
 function createDealWithInvite() {
+    // Проверка подключения
+    if (!tg) {
+        alert('❌ Откройте через Telegram бота');
+        return;
+    }
+    if (!tgUserData) {
+        alert('❌ Нет данных пользователя');
+        return;
+    }
+    
+    // Получаем данные из полей
     const buyerUsername = document.getElementById('dealBuyerUsername').value.trim();
     const title = document.getElementById('dealTitle').value.trim();
     const amount = parseFloat(document.getElementById('dealAmount').value);
     const currency = document.getElementById('dealCurrency').value;
     
+    // Проверки
     if (!buyerUsername) {
         alert('❌ Введите юзернейм покупателя!');
         return;
     }
-    
     if (!title || title.length < 3) {
         alert('❌ Введите название сделки (минимум 3 символа)');
         return;
     }
-    
     if (isNaN(amount) || amount <= 0) {
         alert('❌ Введите корректную сумму');
         return;
     }
     
-    if (tg) {
-        const sendData = JSON.stringify({
-            action: 'create_deal_with_invite',
-            data: {
-                title: title,
-                amount: amount,
-                currency: currency,
-                buyer_username: buyerUsername,
-                seller_id: tgUserData?.id || null,
-                seller_name: tgUserData?.first_name || 'Продавец'
-            }
-        });
-        
-        console.log('Sending invite:', sendData);
-        tg.sendData(sendData);
-        
-        // Очищаем поля
-        document.getElementById('dealBuyerUsername').value = '';
-        document.getElementById('dealTitle').value = '';
-        document.getElementById('dealAmount').value = '';
-        
-        alert(`✅ Приглашение отправлено пользователю @${buyerUsername.replace('@', '')}!\n\nОн получит уведомление от бота с кнопками ПРИНЯТЬ/ОТКЛОНИТЬ`);
-    } else {
-        alert('❌ Ошибка: не удалось связаться с ботом');
-    }
+    // Отправляем данные боту
+    const sendData = JSON.stringify({
+        action: 'create_deal_with_invite',
+        data: {
+            title: title,
+            amount: amount,
+            currency: currency,
+            buyer_username: buyerUsername,
+            seller_id: tgUserData?.id || null,
+            seller_name: tgUserData?.first_name || 'Продавец'
+        }
+    });
+    
+    console.log('Sending invite:', sendData);
+    tg.sendData(sendData);
+    
+    // Очищаем поля
+    document.getElementById('dealBuyerUsername').value = '';
+    document.getElementById('dealTitle').value = '';
+    document.getElementById('dealAmount').value = '';
+    
+    alert(`✅ Приглашение отправлено @${buyerUsername.replace('@', '')}`);
 }
-
 // Получение ID сделки из URL
 function getDealIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
