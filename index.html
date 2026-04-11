@@ -638,26 +638,38 @@ initTelegramWebApp();
 
 // ========== НОВЫЕ ФУНКЦИИ ДЛЯ СДЕЛОК ==========
 
+// Обработка ответов от бота
+if (window.Telegram && window.Telegram.WebApp) {
+    const tg = window.Telegram.WebApp;
+    
+    // Слушаем ответы от бота
+    tg.onEvent('web_app_data_send', function(data) {
+        console.log('📨 Ответ от бота:', data);
+    });
+}
+    
+// Создание сделки с приглашением
 // Создание сделки с приглашением
 // Создание сделки с приглашением
 function createDealWithInvite() {
-    // Проверка подключения
-    if (!tg) {
+    if (!window.Telegram || !window.Telegram.WebApp) {
         alert('❌ Откройте через Telegram бота');
         return;
     }
+    
+    const tg = window.Telegram.WebApp;
+    const tgUserData = tg.initDataUnsafe?.user;
+    
     if (!tgUserData) {
         alert('❌ Нет данных пользователя');
         return;
     }
     
-    // Получаем данные из полей
     const buyerUsername = document.getElementById('dealBuyerUsername').value.trim();
     const title = document.getElementById('dealTitle').value.trim();
     const amount = parseFloat(document.getElementById('dealAmount').value);
     const currency = document.getElementById('dealCurrency').value;
     
-    // Проверки
     if (!buyerUsername) {
         alert('❌ Введите юзернейм покупателя!');
         return;
@@ -671,7 +683,9 @@ function createDealWithInvite() {
         return;
     }
 
-    // Формируем данные для отправки
+    // ПОКАЗЫВАЕМ, ЧТО ИДЁТ ОТПРАВКА
+    alert('⏳ Отправка данных боту...');
+    
     const sendData = {
         action: 'create_deal_with_invite',
         data: {
@@ -679,15 +693,16 @@ function createDealWithInvite() {
             amount: amount,
             currency: currency,
             buyer_username: buyerUsername,
-            seller_id: tgUserData?.id || null,
-            seller_name: tgUserData?.first_name || 'Продавец'
+            seller_id: tgUserData.id,
+            seller_name: tgUserData.first_name || 'Продавец'
         }
     };
     
-    console.log('📤 Отправка в бота:', JSON.stringify(sendData));
+    console.log('📤 Отправка:', sendData);
     
-    // Отправляем данные в бота
+    // ОТПРАВЛЯЕМ ДАННЫЕ В БОТА
     tg.sendData(JSON.stringify(sendData));
+    
     console.log('✅ Данные отправлены!');
     
     // Очищаем поля
@@ -695,7 +710,8 @@ function createDealWithInvite() {
     document.getElementById('dealTitle').value = '';
     document.getElementById('dealAmount').value = '';
     
-    alert(`✅ Приглашение отправлено @${buyerUsername.replace('@', '')}`);
+    // ВАЖНО: Не показываем "Успех" сразу! Бот должен подтвердить!
+    // alert('✅ Приглашение отправлено @' + buyerUsername.replace('@', ''));
 }
 // Получение ID сделки из URL
 function getDealIdFromUrl() {
